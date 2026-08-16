@@ -1,0 +1,40 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { formatShortcut } from "../../../features/_utils/keyboard.utils";
+import styles from "../Actions.module.css";
+import { faCircleDot } from "@fortawesome/free-solid-svg-icons";
+import { ReactElement, useState } from "react";
+import { faCircle } from "@fortawesome/free-regular-svg-icons";
+import { ActionProps } from "../Actions";
+import { useClassNames } from "../../../hooks";
+
+export interface RadioActionProps extends ActionProps {
+	options: {
+		label: string;
+		shortcut?: string[]
+	}[];
+	initialIndex?: number;
+}
+
+export function RadioAction({ actionId, options, initialIndex = 0, onTrigger }: RadioActionProps): ReactElement {
+	const [activeIndex, setActiveIndex] = useState(initialIndex);
+
+	return <div key={actionId} className={useClassNames([], "Actions", "Radio")}>
+		{options.map(({ label, shortcut }, index) =>
+			<button key={label} className={styles.Button} tabIndex={0} onClick={(event) => {
+				setActiveIndex(index);
+				onTrigger?.(event as unknown as Event, index);
+			}}>
+				<span className={useClassNames([styles.Label], "Actions", "Label")}>
+					<div className={styles.Icon}>
+						{activeIndex === index
+							? <FontAwesomeIcon icon={faCircleDot}/>
+							: <FontAwesomeIcon icon={faCircle}/>
+						}
+					</div>
+					<p>{label}</p>
+				</span>
+				{shortcut && <p className={styles.Shortcut}>{formatShortcut(shortcut)}</p>}
+			</button>
+		)}
+	</div>;
+}

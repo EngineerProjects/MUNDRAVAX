@@ -1,0 +1,73 @@
+import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { useSystemManager } from "../system/systemManagerContext";
+
+/**
+ * Returns the width and height of the element with ID "root".
+ */
+export function useScreenDimensions(): [screenWidth: number | null, screenHeight: number | null] {
+	const [screenWidth, setScreenWidth] = useState<number | null>(null);
+	const [screenHeight, setScreenHeight] = useState<number | null>(null);
+
+	useEffect(() => {
+		const resizeObserver = new ResizeObserver((event) => {
+			setScreenWidth(event[0].contentBoxSize[0].inlineSize);
+			setScreenHeight(event[0].contentBoxSize[0].blockSize);
+		});
+
+		const root = document.getElementById("root");
+
+		if (root == null)
+			throw new Error("Root is null: No element with ID 'root' found");
+
+		resizeObserver.observe(root);
+	}, []);
+
+	return [screenWidth, screenHeight];
+}
+
+/**
+ * Returns the ideal orientation of an element so that it does not go outside of the screen.
+ */
+export function useScreenBounds({ avoidTaskbar = true }: {
+	/** Whether to avoid the task bar. */
+	avoidTaskbar: boolean;
+}): {
+	/** The React ref of the element. */
+	ref: MutableRefObject<HTMLElement | null>;
+	initiated: boolean;
+	/** Whether the element should align to the left (`true`) or right (`false`). */
+	alignLeft: boolean;
+	/** Whether the element should align to the top (`true`) or bottom (`false`). */
+	alignTop: boolean;
+} {
+	const { taskbarConfig } = useSystemManager();
+	const ref = useRef<HTMLElement | null>(null);
+	const [initiated, setInitiated] = useState(false);
+	const [alignLeft, setAlignLeft] = useState(false);
+	const [alignTop, setAlignTop] = useState(false);
+	const [screenWidth, screenHeight] = useScreenDimensions();
+
+	useEffect(() => {
+		if (ref.current == null || screenWidth == null || screenHeight == null)
+			return;
+
+		const rect = ref.current.getBoundingClientRect();
+		const maxX = screenWidth;
+		let maxY = screenHeight;
+
+		if (avoidTaskbar)
+			maxY -= taskbarConfig.height;
+
+		const isOverflowingRight = rect.x + rect.width > maxX;
+		const isOverflowingBottom = rect.y + rect.height > maxY;
+
+		if (isOverflowingRight)
+			setAlignLeft(true);
+		if (isOverflowingBottom)
+			setAlignTop(true);
+
+		setInitiated(true);
+	}, [alignLeft, avoidTaskbar, screenHeight, screenWidth]);
+
+	return { ref, initiated, alignLeft, alignTop };
+}

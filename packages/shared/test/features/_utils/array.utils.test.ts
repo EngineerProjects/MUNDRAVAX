@@ -1,0 +1,40 @@
+import { expect } from "vitest";
+import { interleave, randomFromArray, removeDuplicatesFromArray, removeFromArray, replaceAll } from "../../../src/features";
+import { test } from "../..";
+
+test.each([
+	[1, [2, 3]],
+	[3, [1, 2]],
+	[0, [1, 2, 3]],
+])("removeFromArray(%d, [1, 2, 3]) -> %o", (item, expected) => {
+	const array = [1, 2, 3];
+	removeFromArray(item, array);
+	expect(array).toStrictEqual(expected);
+});
+
+test("randomFromArray", { repeats: 5 }, () => {
+	const array = [1, 2, 3, 4, 5];
+	expect(randomFromArray(array)).toBeOneOf(array);
+});
+
+test.simpleCases(removeDuplicatesFromArray, [
+	[[], []],
+	[[1, 2, 3], [1, 2, 3]],
+	[[1, 1, 1], [1]],
+	[[1, 2, 2, 3], [1, 2, 3]],
+	[[], []],
+	[[1, 1, 2, 2, 3, 3], [1, 2, 3]],
+]);
+
+test.cases(interleave, [
+	[[0, [1, 2, 3]], [1, 0, 2, 0, 3]],
+	[[0, [1, 2]], [1, 0, 2]],
+	[[0, [1]], [1]],
+	[[0, []], []],
+]);
+
+test.cases(replaceAll, [
+	[[[0, 1, 2, 0, 3], 0, -1], [-1, 1, 2, -1, 3]],
+	[[["foo", "bar", "foo"], "bar", "rab"], ["foo", "rab", "foo"]],
+	[[[], 0, 1], []],
+]);

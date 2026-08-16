@@ -1,0 +1,57 @@
+{
+	"name": "@prozilla-os/shared",
+	"description": "A library of shared utility functions for ProzillaOS packages.",
+	"version": "1.4.0",
+	"homepage": "https://os.prozilla.dev",
+	"author": {
+		"name": "Prozilla",
+		"email": "business@prozilla.dev",
+		"url": "https://prozilla.dev/"
+	},
+	"funding": "https://ko-fi.com/prozilla",
+	"type": "module",
+	"main": "dist/main.js",
+	"types": "dist/main.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/main.d.ts",
+			"default": "./dist/main.js"
+		},
+		"./logging": {
+			"types": "./dist/logging.d.ts",
+			"default": "./dist/logging.js"
+		},
+		"./utils": {
+			"types": "./dist/utils.d.ts",
+			"default": "./dist/utils.js"
+		},
+		"./package.json": "./package.json"
+	},
+	"scripts": {
+		"build": "tsc && vite build",
+		"test": "vitest",
+		"lint": "pnpm eslint ."
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/prozilla-os/ProzillaOS.git",
+		"directory": "packages/shared"
+	},
+	"license": "MIT",
+	"devDependencies": {
+		"@types/node": "^20.19.39",
+		"typescript": "^5.9.3",
+		"vite": "^7.3.2",
+		"vite-plugin-dts": "^4.5.4",
+		"vite-plugin-externalize-deps": "^0.10.0",
+		"vite-plugin-lib-inject-css": "^2.2.2",
+		"vitest": "^4.1.5"
+	},
+	"files": [
+		"dist"
+	],
+	"publishConfig": {
+		"registry": "https://registry.npmjs.org/",
+		"access": "public"
+	}
+}

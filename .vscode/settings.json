@@ -1,0 +1,27 @@
+{
+	"npm.packageManager": "pnpm",
+	"editor.rulers": [
+		120
+	],
+	"workbench.colorCustomizations": {
+		"editorRuler.foreground": "#1F1F1F"
+	},
+	"eslint.useFlatConfig": true,
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": "always",
+		"source.fixAll.ts": "always"
+	},
+	"typescript.preferences.importModuleSpecifier": "relative",
+	"javascript.preferences.importModuleSpecifier": "relative",
+    "search.exclude": {
+        "**/dist/**": true,
+        "**/node_modules/**": true
+    },
+	"search.useIgnoreFiles": true,
+	"github-actions.workflows.pinned.workflows": [
+		".github/workflows/deploy.yml"
+	],
+	"files.exclude": {
+		"**/.turbo": true
+	},
+}

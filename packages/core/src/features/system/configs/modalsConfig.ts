@@ -1,0 +1,31 @@
+import { Vector2 } from "@prozilla-os/shared";
+
+export interface ModalsConfigOptions {
+	/**
+	 * Default size of a dialog box.
+	 * @default new Vector2(400, 200)
+	 */
+	defaultDialogSize: Vector2;
+
+	/**
+	 * Default size of a file selector.
+	 * @default new Vector2(700, 400)
+	 */
+	defaultFileSelectorSize: Vector2;
+}
+
+export class ModalsConfig {
+	defaultDialogSize: ModalsConfigOptions["defaultDialogSize"];
+	defaultFileSelectorSize: ModalsConfigOptions["defaultFileSelectorSize"];
+
+	static DIALOG_CONTENT_TYPES = {
+		closeButton: 0,
+	};
+
+	constructor(options: Partial<ModalsConfigOptions> = {}) {
+		const { defaultDialogSize, defaultFileSelectorSize } = options;
+		
+		this.defaultDialogSize = defaultDialogSize ?? new Vector2(400, 200);
+		this.defaultFileSelectorSize = defaultFileSelectorSize ?? new Vector2(700, 400);
+	}
+}

@@ -1,0 +1,71 @@
+import { useEffect, useRef } from "react";
+import styles from "./CircuitView.module.css";
+import { App, ClickAction, Divider, DropdownAction, HeaderMenu, openUrl, useAppFolder, useManualContextMenu, useSingleton } from "@prozilla-os/core";
+import { Circuit } from "../core/circuit";
+import { ChipsManager } from "../core/chips/chipsManager";
+
+interface CircuitViewProps {
+	app?: App;
+}
+
+export function CircuitView({ app }: CircuitViewProps) {
+	const virtualFolder = useAppFolder(app);
+	const circuit = useSingleton(() => new Circuit("Chip", "#000", 2, 1));
+	const canvasRef = useRef<HTMLCanvasElement | null>(null);
+	const { openContextMenu } = useManualContextMenu();
+	circuit.openContextMenu = openContextMenu;
+
+	useEffect(() => {
+		if (canvasRef.current == null)
+			return;
+
+		circuit.init(canvasRef.current);
+
+		return () => {
+			circuit.cleanup();
+		};
+	}, [canvasRef, circuit]);
+
+	return <>
+		<HeaderMenu>
+			<DropdownAction label="Circuit" showOnHover={false}>
+				<ClickAction label="New" onTrigger={() => { circuit.reset(); }}/>
+				<ClickAction label="Save" onTrigger={() => {
+					if (virtualFolder != null)
+						ChipsManager.saveCircuit(circuit, virtualFolder);
+				}}/>
+				<ClickAction label="Load" onTrigger={() => {
+					if (virtualFolder != null)
+						ChipsManager.loadCircuit(circuit, virtualFolder);
+				}}/>
+			</DropdownAction>
+			<DropdownAction label="Add" showOnHover={false}>
+				<ClickAction label="AND gate" onTrigger={() => {
+					circuit.inputHandler.startChipPlacement(ChipsManager.CHIPS.and);
+				}}/>
+				<ClickAction label="NOT gate" onTrigger={() => {
+					circuit.inputHandler.startChipPlacement(ChipsManager.CHIPS.not);
+				}}/>
+				<Divider/>
+				<ClickAction label="OR gate" onTrigger={() => {
+					circuit.inputHandler.startChipPlacement(ChipsManager.CHIPS.or);
+				}}/>
+				<Divider/>
+				<ClickAction label="HIGH" onTrigger={() => {
+					circuit.inputHandler.startChipPlacement(ChipsManager.CHIPS.high);
+				}}/>
+				<ClickAction label="LOW" onTrigger={() => {
+					circuit.inputHandler.startChipPlacement(ChipsManager.CHIPS.low);
+				}}/>
+			</DropdownAction>
+			<DropdownAction label="Help" showOnHover={false}>
+				<ClickAction label="Digital Electronics Glossary" onTrigger={() => {
+					openUrl("http://www.pmcgibbon.net/teachcte/electron/degloss1.htm");
+				}}/>
+			</DropdownAction>
+		</HeaderMenu>
+		<div className={styles.CircuitView}>
+			<canvas ref={canvasRef} className={styles.Canvas}/>
+		</div>
+	</>;
+}

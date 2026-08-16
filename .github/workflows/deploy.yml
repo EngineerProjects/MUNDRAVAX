@@ -1,0 +1,75 @@
+name: Deploy website
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    name: Build & deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout latest version
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          path: latest
+
+      - name: Fetch stable tag
+        id: get_tag
+        run: |
+          cd latest
+          STABLE_TAG=$(gh release view --json tagName --template '{{.tagName}}' || git tag -l "v*" --sort=-v:refname | head -n 1)
+          echo "tag=$STABLE_TAG" >> $GITHUB_OUTPUT
+          echo "Found stable tag: $STABLE_TAG"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout stable release
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ steps.get_tag.outputs.tag }}
+          path: stable
+
+      - name: Set up pnpm (stable)
+        uses: pnpm/action-setup@v6
+        with:
+          version: 10.33.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Build stable packages
+        run: |
+          cd stable
+          pnpm install --frozen-lockfile
+          pnpm run packages:build
+
+      - name: Set up pnpm (latest)
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11.3.0
+
+      - name: Configure git
+        run: |
+          cd latest
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global url."https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
+
+      - name: Build latest packages & deploy site
+        run: |
+          cd latest
+          pnpm install --frozen-lockfile
+          pnpm run deploy
+        env:
+          RELEASE_PATH: ${{ github.workspace }}/stable

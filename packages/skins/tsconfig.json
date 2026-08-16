@@ -1,0 +1,17 @@
+{
+	"extends": "../../tsconfig.json",
+	"compilerOptions": {
+		"baseUrl": "../..",
+		"composite": true,
+		"outDir": "dist",
+		"declaration": true,
+		"emitDeclarationOnly": true,
+		"noEmit": false,
+		"rootDir": "../",
+		"paths": {
+			"@prozilla-os/*": ["packages/*/src/main"],
+		},
+	},
+	"include": ["src", "vite.config.ts", "../shared/src/**/*"],
+	"exclude": ["node_modules"]
+}

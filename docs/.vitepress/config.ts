@@ -1,0 +1,142 @@
+import { defineConfig, HeadConfig } from "vitepress";
+import { PACKAGES, getPackageSidebars } from "./packages.config";
+import { DESCRIPTION, IMAGE, LOCALE, TITLE } from "./meta.config";
+import { getNavigationItems, getSidebarItems } from "./nav.config";
+import lightbox from "vitepress-plugin-lightbox";
+import { SymbolRegistry } from "./plugins/symbolRegistry";
+import { inlineCodeLinksPlugin } from "./plugins/inlineCodeLinksPlugin";
+import { codeBlockLinksPlugin } from "./plugins/codeBlockLinksPlugin";
+import { codeBlockTitlePlugin } from "./plugins/codeBlockTitlePlugin";
+import { groupIconMdPlugin, groupIconVitePlugin } from "vitepress-plugin-group-icons";
+
+export const DEV_MODE = process.env.NODE_ENV !== "production";
+
+const symbolRegistry = new SymbolRegistry();
+
+// https://vitepress.dev/reference/site-config
+export default defineConfig({
+	title: TITLE,
+	description: DESCRIPTION,
+	srcDir: "src",
+	srcExclude: DEV_MODE ? [] : ["**/*.draft.md"],
+	base: "/docs/",
+	head: [
+		["link", { rel: "icon", href: "/docs/favicon.ico" }],
+		["link", { rel: "preconnect", href: "https://fonts.googleapis.com" }],
+		["link", { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: "" }],
+		["link", { href: "https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap", rel: "stylesheet" }],
+	],
+	cleanUrls: true,
+	outDir: "./dist",
+	sitemap: {
+		hostname: "https://os.prozilla.dev/docs/",
+	},
+	rewrites: {
+		...DEV_MODE ? { ":path(.*).draft.md": ":path.md" } : {},
+	},
+	themeConfig: {
+		// https://vitepress.dev/reference/default-theme-config
+		nav: [
+			{ text: "Demo", link: "https://os.prozilla.dev/", target: "_blank" },
+			...getNavigationItems(DEV_MODE),
+		],
+		sidebar: {
+			"/": getSidebarItems(DEV_MODE),
+			...getPackageSidebars(PACKAGES),
+		},
+		editLink: {
+			pattern: ({ frontmatter }) => {
+				if ("editUrl" in frontmatter && typeof frontmatter.editUrl === "string") {
+					return frontmatter.editUrl;
+				} else {
+					return "https://github.com/prozilla-os/ProzillaOS/edit/main/docs/src/:path";
+				}
+			},
+			text: "Suggest changes to this page",
+		},
+		socialLinks: [
+			{ icon: "github", link: "https://github.com/prozilla-os/ProzillaOS" },
+			{ icon: "discord", link: "https://discord.gg/JwbyQP4tdz" },
+			{ icon: "npm", link: "https://www.npmjs.com/package/prozilla-os" },
+		],
+		logo: {
+			dark: "/logo-light.svg",
+			light: "/logo-dark.svg",
+		},
+		siteTitle: "ProzillaOS",
+		footer: {
+			message: "Built by <strong><a href=\"https://prozilla.dev/\" target=\"_blank\">Prozilla</a></strong>",
+			copyright: "Copyright &copy; 2023-present Prozilla",
+		},
+		search: {
+			provider: "local",
+			options: {
+				detailedView: true,
+			},
+		},
+	},
+	transformPageData(pageData) {
+		if (DEV_MODE && pageData.filePath.endsWith(".draft.md"))
+			pageData.frontmatter.draft = true;
+
+		pageData.frontmatter.head ??= [] as HeadConfig[];
+		const head = pageData.frontmatter.head as HeadConfig[];
+
+		const title = pageData.frontmatter.layout === "home"
+			? TITLE
+			: `${pageData.title} | ${TITLE}`;
+		head.push(["meta", { name: "og:title", content: title }]);
+		head.push(["meta", { name: "twitter:title", content: title }]);
+
+		const description = (pageData.frontmatter.description as string | null) ?? DESCRIPTION;
+		head.push(["meta", { name: "og:description", content: description }]);
+		head.push(["meta", { name: "twitter:description", content: description }]);
+
+		const canonicalUrl = `https://os.prozilla.dev/docs/${pageData.relativePath}`
+			.replace(/index\.md$/, "")
+			.replace(/\.(md|html)$/, "");
+		head.push(["link", { rel: "canonical", href: canonicalUrl }]);
+		head.push(["meta", { name: "og:url", content: canonicalUrl }]);
+		head.push(["meta", { name: "twitter:url", content: canonicalUrl }]);
+
+		const locale = LOCALE;
+		head.push(["meta", { name: "og:locale", content: locale }]);
+
+		const image = (pageData.frontmatter.image as string | null) ?? IMAGE;
+		head.push(["meta", { name: "og:image", content: image }]);
+		head.push(["meta", { name: "twitter:image", content: image }]);
+
+		// Other meta data
+		head.push(["meta", { name: "og:type", content: "website" }]);
+		head.push(["meta", { name: "twitter:card", content: "summary_large_image" }]);
+	},
+	ignoreDeadLinks: [
+		/^https?:\/\/localhost/,
+	],
+	markdown: {
+		theme: {
+			dark: "material-theme",
+			light: "material-theme-lighter",
+		},
+		codeTransformers: [codeBlockLinksPlugin(symbolRegistry, "/docs")],
+		config: (markdown) => {
+			markdown.use(lightbox, {});
+			markdown.use(inlineCodeLinksPlugin, { registry: symbolRegistry });
+			markdown.use(codeBlockTitlePlugin);
+			markdown.use(groupIconMdPlugin);
+		},
+		container: {
+			tipLabel: "Tip",
+			warningLabel: "Warning",
+			dangerLabel: "Danger",
+			infoLabel: "Info",
+			detailsLabel: "Details",
+			cautionLabel: "Caution",
+			importantLabel: "Important",
+			noteLabel: "Note",
+		},
+	},
+	vite: {
+		plugins: [groupIconVitePlugin()],
+	},
+});

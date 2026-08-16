@@ -1,0 +1,211 @@
+// @ts-check
+
+import { defineConfig, globalIgnores } from "eslint/config";
+import eslint from "@eslint/js";
+import tseslint from "typescript-eslint";
+import react from "eslint-plugin-react";
+import reactRefresh from "eslint-plugin-react-refresh";
+import jsdoc from "eslint-plugin-jsdoc";
+import reactHooks from "eslint-plugin-react-hooks";
+
+export default defineConfig(
+	globalIgnores([
+		"eslint.config.js",
+		"**/dist/**/*",
+		"**/node_modules/**/*",
+		"**/vite.config.ts.timestamp-*.mjs",
+		"docs/.vitepress/cache/**/*"
+	]),
+	{
+		extends: [
+			eslint.configs.recommended,
+			tseslint.configs.recommendedTypeChecked,
+		],
+		languageOptions: {
+			parserOptions: {
+				projectService: {
+					allowDefaultProject: ["*.ts", "*.tsx"]
+				},
+				tsconfigRootDir: import.meta.dirname,
+				allowAutomaticSingleRunInference: true,
+			},
+		},
+		settings: {
+			react: {
+				version: "detect"
+			}
+		},
+		plugins: {
+			"react": /** @type {import("eslint").ESLint.Plugin} */ (react),
+			"react-refresh": reactRefresh,
+		},
+		rules: {
+			"quotes": ["error", "double"],
+			"no-unused-vars": "off",
+			"indent": [
+				"error",
+				"tab",
+				{
+					"SwitchCase": 1
+				}
+			],
+			"semi": "error",
+			"no-var": "error",
+			"prefer-const": "error",
+			"object-curly-spacing": [
+				"warn",
+				"always"
+			],
+			"default-case": "off",
+			"arrow-parens": "error",
+			"space-infix-ops": "warn",
+    		"comma-spacing": "warn",
+			"comma-dangle": [
+				"warn",
+				{
+					"arrays": "always-multiline",
+					"objects": "always-multiline",
+					"imports": "always-multiline",
+					"exports": "always-multiline",
+					"functions": "never"
+				}
+			],
+			"keyword-spacing": "error",
+			"react/no-multi-comp": [
+				"error",
+				{
+					"ignoreStateless": true
+				}
+			],
+			"react/no-invalid-html-attribute": "error",
+			"react/boolean-prop-naming": "warn",
+			"react/jsx-handler-names": "warn",
+			"react-refresh/only-export-components": [
+				"warn",
+				{
+					"allowConstantExport": true
+				}
+			],
+			"@typescript-eslint/ban-types": "off",
+			"@typescript-eslint/no-unused-vars": [
+				"warn",
+				{
+					"args": "all",
+					"argsIgnorePattern": "^_",
+					"caughtErrors": "all",
+					"caughtErrorsIgnorePattern": "^_",
+					"destructuredArrayIgnorePattern": "^_",
+					"varsIgnorePattern": "^_",
+					"ignoreRestSiblings": true
+				}
+			],
+			"@typescript-eslint/naming-convention": [
+				"error",
+				{
+					selector: "default",
+					format: ["camelCase"],
+					leadingUnderscore: "allow",
+					trailingUnderscore: "allow",
+				},
+				{
+					selector: "import",
+					format: ["camelCase", "PascalCase"],
+				},
+				{
+					// React components and Variables
+					selector: "variable",
+					format: ["camelCase", "UPPER_CASE", "PascalCase"],
+					leadingUnderscore: "allow",
+				},
+				{
+					// Types and enum members
+					selector: ["typeLike", "enumMember"],
+					format: ["PascalCase"],
+				},
+				{
+					// React components, functions and properties
+					selector: [
+						"function",
+						"parameter",
+						"classProperty",
+						"objectLiteralProperty",
+						"typeProperty",
+						"classMethod",
+						"objectLiteralMethod",
+						"typeMethod",
+						"accessor",
+					],
+					format: ["camelCase", "PascalCase"],
+					leadingUnderscore: "allow",
+				},
+				{
+					// Constant (static & readonly) class fields
+					selector: "classProperty",
+					modifiers: ["static", "readonly"],
+					format: ["UPPER_CASE"],
+				},
+				{
+					// Static class fields
+					selector: "classProperty",
+					modifiers: ["static"],
+					format: ["UPPER_CASE", "camelCase"],
+				},
+				{
+					// Ignore destructured variables and parameters
+					selector: ["variable", "parameter"],
+					modifiers: ["destructured"],
+					format: null,
+				},
+				{
+					// Ignore properties that require quotes
+					selector: [
+						"classProperty",
+						"objectLiteralProperty",
+						"typeProperty",
+						"classMethod",
+						"objectLiteralMethod",
+						"typeMethod",
+						"accessor",
+						"enumMember",
+					],
+					modifiers: ["requiresQuotes"],
+					format: null,
+				},
+			],
+			"@typescript-eslint/await-thenable": "off",
+			"@typescript-eslint/unbound-method": ["error", {
+				ignoreStatic: true
+			}],
+			"@typescript-eslint/no-unnecessary-condition": ["warn", {
+				allowConstantLoopConditions: "only-allowed-literals"
+			}],
+			"no-extra-parens": "warn",
+			"@typescript-eslint/no-base-to-string": ["error", {
+				checkUnknown: false
+			}],
+			"no-mixed-spaces-and-tabs": "error",
+			"@typescript-eslint/no-namespace": "off",
+		    "object-shorthand": ["warn", "properties"]
+		},
+	},
+	{
+		files: ["packages/**/*"],
+		plugins: {
+			"jsdoc": jsdoc,
+		},
+		rules: {
+			"jsdoc/require-description-complete-sentence": "warn",
+			"jsdoc/require-hyphen-before-param-description": "warn",
+			"jsdoc/check-param-names": ["warn", {
+				checkDestructured: false,
+			}],
+		}
+	},
+	{
+		// TODO: Gradually enable for all packages
+		files: ["packages/apps/code-editor/**/*"],
+		extends: [
+			reactHooks.configs.flat.recommended,
+		],
+	},
+);

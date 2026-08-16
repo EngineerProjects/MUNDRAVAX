@@ -1,0 +1,69 @@
+{
+	"name": "prozilla-os",
+	"description": "a React component library written in TypeScript for building web-based operating systems, made by Prozilla.",
+	"version": "2.0.5",
+	"homepage": "https://os.prozilla.dev",
+	"author": {
+		"name": "Prozilla",
+		"email": "business@prozilla.dev",
+		"url": "https://prozilla.dev/"
+	},
+	"funding": "https://ko-fi.com/prozilla",
+	"type": "module",
+	"main": "dist/main.js",
+	"types": "dist/main.d.ts",
+	"scripts": {
+		"build": "vite build && vite-node scripts/generateTypeDeclaration",
+		"lint": "pnpm eslint ."
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/prozilla-os/ProzillaOS.git",
+		"directory": "packages/prozilla-os"
+	},
+	"license": "MIT",
+	"dependencies": {
+		"@prozilla-os/app-center": "workspace:*",
+		"@prozilla-os/browser": "workspace:*",
+		"@prozilla-os/calculator": "workspace:*",
+		"@prozilla-os/core": "workspace:*",
+		"@prozilla-os/file-explorer": "workspace:*",
+		"@prozilla-os/media-viewer": "workspace:*",
+		"@prozilla-os/settings": "workspace:*",
+		"@prozilla-os/shared": "workspace:*",
+		"@prozilla-os/skins": "workspace:*",
+		"@prozilla-os/terminal": "workspace:*",
+		"@prozilla-os/text-editor": "workspace:*",
+		"@prozilla-os/code-editor": "workspace:*"
+	},
+	"devDependencies": {
+		"@types/node": "^20.19.39",
+		"@types/react": "^18.3.28",
+		"@vitejs/plugin-react-swc": "^3.11.0",
+		"typescript": "^5.9.3",
+		"unplugin-dts": "1.0.0-beta.6",
+		"vite": "^7.3.2",
+		"vite-plugin-css-injected-by-js": "^3.5.2"
+	},
+	"peerDependencies": {
+		"react": "^18.3.1"
+	},
+	"files": [
+		"dist"
+	],
+	"sideEffects": [
+		"**/*.css"
+	],
+	"publishConfig": {
+		"registry": "https://registry.npmjs.org/",
+		"access": "public"
+	},
+	"keywords": [
+		"react",
+		"typescript",
+		"web-os",
+		"components",
+		"internet-os",
+		"virtual-desktop"
+	]
+}

@@ -1,0 +1,157 @@
+import { Application, LogLevel, TypeDocOptions } from "typedoc";
+import type { PluginOptions } from "typedoc-plugin-markdown";
+import { writeFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { formatPackageName, OUT_DIR, PACKAGE_PATHS, PACKAGE_PREFIX, packagePathToName, PACKAGES_DIR } from "./packages.utils.mjs";
+import { Option, program } from "@commander-js/extra-typings";
+import { formatMemberPageTitle, formatModulePageTitle } from "./typedoc.utils";
+import { Logger } from "@prozilla-os/shared/logging";
+
+const DEFAULT_OPTIONS: TypeDocOptions & PluginOptions = {
+	plugin: [
+		"typedoc-plugin-mdn-links",
+		"typedoc-plugin-markdown",
+		"./scripts/typedoc-plugin.mjs",
+	],
+	categorizeByGroup: true,
+	router: "group",
+	groupOrder: ["Apps", "Components", "Hooks", "Classes", "Constructors", "Properties", "Methods", "Functions", "Variables", "*", "Interfaces", "Types"],
+	sort: ["source-order"],
+	hideBreadcrumbs: true,
+	hidePageHeader: true,
+	expandParameters: true,
+	expandObjects: true,
+	pageTitleTemplates: {
+		index: "Index",
+		member: formatMemberPageTitle,
+		module: formatModulePageTitle,
+	},
+	entryFileName: "index",
+	modulesFileName: "api",
+	navigation: {
+		includeGroups: true,
+	},
+};
+
+const RELEASE_PATH = process.env.RELEASE_PATH?.trim();
+
+const SOURCE_BASE = RELEASE_PATH 
+	? resolve(RELEASE_PATH, "packages") 
+	: resolve(__dirname, "../", PACKAGES_DIR);
+
+const COMPILER_BASE = RELEASE_PATH ? resolve(RELEASE_PATH) : resolve(__dirname, "../../");
+
+const COMPILER_PATHS: Record<string, string[]> = {
+	"*": [resolve(COMPILER_BASE, "node_modules/*").replaceAll("\\", "/")],
+};
+
+PACKAGE_PATHS.forEach((path) => {
+	const name = packagePathToName(path);
+	// Point to the source files in the release directory
+	const absolutePackagePath = resolve(SOURCE_BASE, path, "src/main.ts").replaceAll("\\", "/");
+	COMPILER_PATHS[name] = [absolutePackagePath];
+	COMPILER_PATHS[`${name}/*`] = [resolve(SOURCE_BASE, path, "src/*").replaceAll("\\", "/")];
+});
+
+const logger = new Logger();
+
+program.name("typedoc-helper")
+	.description("Automatically generates documentation for the API of each package and adds them to the documentation site.");
+
+program.command("run", { isDefault: true })
+	.allowExcessArguments(true)
+	.option("-f --filter <filter>", "The filter to apply", "all")
+	.addOption(new Option("-s --sequential", "Generate documentation sequentially instead of concurrently").default(true))
+	.addOption(new Option("-c --concurrent", "Generate documentation concurrently (may cause issues if navigation files are missing)").implies({ sequential: false }))
+	.option("-d --dry-run", "Does everything except actually generating documentation", false)
+	.action(async (options) => {
+		const packagesFilter = options.filter;
+		const concurrent = !options.sequential as boolean;
+		const dryRun = options.dryRun;
+
+		// Apply filter
+		let packages = PACKAGE_PATHS;
+		if (packagesFilter !== "all") {
+			if (packagesFilter == "libs") {
+				packages = packages.filter((path) => !path.startsWith("apps/"));
+			} else if (packagesFilter == "apps") {
+				packages = packages.filter((path) => path.startsWith("apps/"));
+			} else {
+				const packagePaths = packagesFilter.split(",").map((path) => path.replace(PACKAGE_PREFIX, ""));
+				packages = packages.filter((path) => packagePaths.includes(path));
+			}
+		}
+		
+		logger.parameter("Filter", packagesFilter);
+		logger.parameter("Packages", packages.length);
+		logger.parameter("Concurrency", concurrent ? "enabled" : "disabled");
+
+		// Generate docs
+		if (concurrent) {
+			await Promise.all(packages.map(async (path) => await generateDocs(path, dryRun)));
+		} else {
+			for (const path of packages) {
+				await generateDocs(path, dryRun);
+			}
+		}
+
+		// Add auto-generated docs to gitignore
+		if (!dryRun) {
+			writeFileSync(resolve(__dirname, "../", OUT_DIR, ".gitignore"), "# Auto-generated documentation\n" + PACKAGE_PATHS.join("\n"));
+		}
+
+		logger.summary();
+		logger.success("Generated all docs");
+	});
+
+async function generateDocs(path: string, dryRun: boolean) {
+	const packageDir = resolve(SOURCE_BASE, path);
+	const entryPoint = resolve(packageDir, "src/main.ts").replaceAll("\\", "/");
+	const outDir = OUT_DIR + path;
+	const tsConfig = resolve(packageDir, "tsconfig.json");
+
+	const options = {
+		...DEFAULT_OPTIONS,
+		path,
+		entryPoints: [entryPoint],
+		tsconfig: tsConfig,
+		out: outDir,
+		navigationJson: `${outDir}/nav.json`,
+	};
+
+	const packageName = formatPackageName(path);
+	logger.pending(`Generating docs for: ${packageName} (Source: ${packageDir})`);
+
+	const onComplete = () => {
+		logger.success(`Generated docs for: ${packageName}`);
+	};
+
+	if (!dryRun) {
+		const app = await Application.bootstrapWithPlugins(options);
+		const project = await app.convert();
+
+		if (project) {
+			const originalLog = app.logger.log.bind(app.logger);
+			app.logger.log = (message: string, level: LogLevel) => {
+				if (level === LogLevel.Warn && message.includes("resolved but is not included"))
+					return;
+				originalLog(message, level);
+			};
+			app.validate(project);
+			app.logger.log = originalLog;
+
+			await app.generateOutputs(project).then(() => {
+				logger.errorCount += app.logger.errorCount;
+				logger.warningCount += app.logger.warningCount;
+				onComplete();
+			}).catch(() => {
+				logger.error(`Failed to generate docs for: ${packageName}`);
+			});
+		}
+	} else {
+		onComplete();
+	}
+}
+
+// Execute program
+program.parse(process.argv);

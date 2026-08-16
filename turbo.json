@@ -1,0 +1,70 @@
+{
+	"$schema": "https://turborepo.dev/schema.json",
+	"ui": "tui",
+	"tasks": {
+		"build": {
+			"dependsOn": ["^build"],
+			"inputs": ["$TURBO_DEFAULT$", "!README.md", "!CHANGELOG.md", "!test/**"],
+			"outputs": ["dist/**"],
+			"outputLogs": "new-only",
+		},
+		"start": {
+			"dependsOn": ["^build"],
+			"cache": false,
+			"persistent": true,
+			"outputLogs": "new-only",
+			"interruptible": true
+		},
+		"//#root:test": {
+			"dependsOn": ["@prozilla-os/dev-tools#build"],
+			"cache": false,
+			"persistent": true,
+			"outputLogs": "new-only",
+			"interruptible": true
+		},
+		"//#root:test:ci": {
+			"dependsOn": ["@prozilla-os/dev-tools#build"],
+			"outputLogs": "new-only",
+		},
+		"//#root:lint": {
+			"dependsOn": ["prozilla-os#build"],
+			"outputs": [],
+			"outputLogs": "new-only"
+		},
+		"//#root:lint:nofix": {
+			"dependsOn": ["prozilla-os#build"],
+			"outputs": [],
+			"outputLogs": "new-only"
+		},
+		"//#root:stage": {
+			"outputs": ["dist/**"],
+			"outputLogs": "new-only",
+			"env": ["RELEASE_PATH"]
+		},
+		"//#root:preview": {
+			"dependsOn": ["root:stage"],
+			"cache": false,
+			"persistent": true,
+			"outputLogs": "new-only",
+			"interruptible": true,
+			"env": ["RELEASE_PATH"]
+		},
+		"//#root:deploy": {
+			"dependsOn": ["root:stage"],
+			"cache": false,
+			"outputLogs": "new-only",
+			"env": ["RELEASE_PATH"]
+		},
+		"//#root:deploy:dry": {
+			"dependsOn": ["root:stage"],
+			"cache": false,
+			"outputLogs": "new-only",
+			"env": ["RELEASE_PATH"]
+		},
+		"//#root:report": {
+			"dependsOn": ["prozilla-os#build", "@prozilla-os/logic-sim#build", "@prozilla-os/dev-tools#build"],
+			"outputs": [],
+			"outputLogs": "new-only"
+		}
+	}
+}

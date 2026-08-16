@@ -1,0 +1,56 @@
+.Taskbar {
+	--svg-drop-shadow-color: var(--taskbar-color);
+
+	position: fixed;
+	display: flex;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: var(--taskbar-height);
+	margin-bottom: env(safe-area-inset-bottom);
+}
+
+.Taskbar::after,
+.Taskbar::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: calc(env(safe-area-inset-bottom, 0) * -1);
+	left: 0;
+	right: 0;
+	pointer-events: none;
+}
+
+.Taskbar::after {
+	opacity: var(--taskbar-opacity);
+	background-color: var(--taskbar-color);
+	z-index: -2;
+}
+
+.Taskbar::before {
+	backdrop-filter: var(--taskbar-filter);
+	z-index: -3;
+}
+
+.Taskbar button {
+	display: flex;
+	align-items: center;
+	color: var(--foreground-color-0);
+	background: none;
+	cursor: pointer;
+	border: none;
+	outline: none;
+	transition: background-color var(--transition-duration-0) var(--ease-in-out-default);
+	z-index: -1;
+}
+
+.Taskbar button:hover,
+.Taskbar button:focus-visible {
+	background-color: var(--taskbar-button-hover-color);
+}
+
+.Menus {
+	display: flex;
+	align-items: center;
+	height: 100%;
+}

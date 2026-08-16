@@ -1,0 +1,47 @@
+import { ANSI } from "@prozilla-os/shared";
+
+export const USERNAME = "user";
+export const HOSTNAME = "prozilla-os";
+export const MAX_WIDTH = 50;
+
+export const WELCOME_MESSAGE = `${ANSI.fg.cyan + ANSI.decoration.dim}$APP_NAME - Made by Prozilla${ANSI.reset}`
+	+ `\n${ANSI.decoration.dim}Type 'help' for a list of commands.${ANSI.reset}\n`;
+
+export const ASCII_LOGO = `
+           *                 
+         ****                
+    **** *****               
+    **: @@@@@@       @@@@@@@ 
+  ** @@@@@@@@@@@@  @@@@@@@@@%
+:**+@@@@@    +@@@@ @@@@   :  
+  : @@@*       @@@ %@@@@@@@  
+ ** @@@@       @@@   *@@@@@@@
+:***#@@@@     @@@@  @    @@@@
+   **=@@@@@@@@@@% @@@@@@@@@@@
+   **- :@@@@@@:    :@@@@@@@: 
+                             `;
+
+export const ANSI_LOGO_COLOR = ANSI.fg.cyan;
+export const ANSI_ASCII_LOGO = `
+           *                 
+         ****                
+    **** *****               
+    **: @@@@@@       @@@@@@@ 
+  ** @@@@@@@@@@@@  @@@@@@@@@%
+:**+@@@@@    +@@@@ @@@@   :  
+  : @@@*       @@@ %@@@@@@@  
+ ** @@@@       @@@   *@@@@@@@
+:***#@@@@     @@@@  @    @@@@
+   **=@@@@@@@@@@% @@@@@@@@@@@
+   **- :@@@@@@:    :@@@@@@@: 
+                             `;
+
+export const EXIT_CODE = {
+	success: 0,
+	generalError: 1,
+	misuseOfBuiltins: 2,
+	commandNotExecutable: 126,
+	commandNotFound: 127,
+	invalidExitArgument: 128,
+	interrupted: 130,
+} as const;

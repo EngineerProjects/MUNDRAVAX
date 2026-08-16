@@ -1,0 +1,188 @@
+.HomeMenuContainer {
+	position: absolute;
+	left: 0;
+	bottom: 100%;
+	height: auto !important;
+	overflow: hidden;
+}
+
+.HomeMenuContainer:not(.Active) {
+	pointer-events: none;
+}
+
+.HomeMenu {
+	opacity: 1;
+	display: flex;
+	border-top-left-radius: var(--border-radius-1);
+	border-top-right-radius: var(--border-radius-1);
+	border-bottom-left-radius: var(--border-radius-1);
+	transform: none;
+	transition: opacity var(--transition-duration-1) var(--ease-in-out-default),
+		transform var(--transition-duration-1) var(--ease-in-out-default);
+	overflow: hidden;
+	resize: horizontal;
+}
+
+.HomeMenuContainer:not(.Active) .HomeMenu {
+	opacity: 0;
+	transform: translateY(50%);
+}
+
+.HomeMenu::after,
+.HomeMenuContainer::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	border-radius: inherit;
+	pointer-events: none;
+}
+
+.HomeMenu::after {
+	opacity: var(--taskbar-menu-opacity);
+	background-color: var(--taskbar-menu-color);
+	z-index: -2;
+}
+
+.HomeMenuContainer::after {
+	opacity: 1;
+	transition: opacity var(--transition-duration-1) var(--ease-in-out-default),
+		top var(--transition-duration-1) var(--ease-in-out-default);
+	backdrop-filter: var(--taskbar-filter);
+	z-index: -3;
+}
+
+.HomeMenuContainer:not(.Active)::after {
+	opacity: 0;
+	top: 50%;
+}
+
+.HomeMenu {
+	--default-buttons-width: 3rem;
+	--buttons-count: 5;
+
+	min-width: 16rem;
+	max-width: 32rem;
+	min-height: calc(var(--default-buttons-width) * var(--buttons-count));
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: var(--border-radius-1);
+}
+
+.Buttons {
+	--buttons-width: var(--default-buttons-width);
+	--padding: 0.25rem;
+	--filter: blur(0px);
+
+	position: absolute;
+	display: flex;
+	flex-direction: column-reverse;
+	justify-content: flex-start;
+	align-items: center;
+	bottom: 0;
+	left: 0;
+	padding: var(--padding);
+	margin-top: auto;
+	width: var(--buttons-width);
+	height: 100%;
+	border-radius: var(--border-radius-1);
+	overflow: hidden;
+	transition: width var(--transition-duration-1) var(--ease-in-out-default) var(--transition-duration-1);
+	z-index: 1;
+}
+
+.Buttons::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	border-radius: inherit;
+	pointer-events: none;
+	backdrop-filter: var(--filter);
+	transition: backdrop-filter var(--transition-duration-1) var(--ease-in-out-default) var(--transition-duration-1);
+}
+
+.Buttons:hover,
+.Buttons:focus-visible {
+	--buttons-width: 10rem;
+	--filter: var(--taskbar-filter);
+}
+
+.Buttons > button {
+	--button-width: calc(var(--buttons-width) - var(--padding) * 2);
+	--button-height: calc(var(--default-buttons-width) - var(--padding) * 2);
+
+	position: relative;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	padding: 0.5rem;
+	width: var(--button-width);
+	height: var(--button-height);
+	border-radius: var(--border-radius-1);
+	overflow: hidden;
+	transition: inherit;
+	z-index: 1;
+}
+
+.Buttons > button > svg {
+	height: 1.5rem;
+	width: 1.5rem;
+}
+
+.Buttons > button > p {
+	position: absolute;
+	left: calc(var(--default-buttons-width) - var(--padding) * 2);
+	margin: 0;
+	white-space: nowrap;
+}
+
+.Apps {
+	display: flex;
+	flex-direction: column;
+	width: 100% !important;
+	max-height: 20rem;
+	padding: 0.5rem;
+	padding-right: 0.25rem;
+	padding-bottom: 0;
+	margin-left: var(--default-buttons-width);
+}
+
+.Logo {
+	display: flex;
+	gap: 0.5rem;
+	width: auto;
+	margin-bottom: 0.5rem;
+	justify-content: flex-start;
+	align-items: center;
+	user-select: none;
+}
+
+.Logo div,
+.Logo svg {
+	width: auto;
+	height: 2.25rem;
+	color: inherit;
+	aspect-ratio: 1;
+}
+
+.Logo svg {
+	object-fit: contain;
+}
+
+.Logo svg * {
+	color: inherit;
+	fill: currentColor;
+}
+
+.Logo > h1 {
+	width: 100%;
+	text-align: left;
+	margin: 0;
+	font-size: 1rem;
+	font-weight: 600;
+	letter-spacing: normal;
+}

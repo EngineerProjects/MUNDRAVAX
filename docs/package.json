@@ -1,0 +1,59 @@
+{
+	"name": "@prozilla-os/docs",
+	"private": true,
+	"author": {
+		"name": "Prozilla",
+		"email": "business@prozilla.dev",
+		"url": "https://prozilla.dev/"
+	},
+	"funding": "https://ko-fi.com/prozilla",
+	"homepage": "https://os.prozilla.dev/docs",
+	"type": "module",
+	"scripts": {
+		"start": "vitepress --port 3000",
+		"build": "vitepress build",
+		"preview": "vitepress preview --port 8080",
+		"api": "vite-node scripts/typedoc",
+		"api:libs": "pnpm run api -- --filter libs",
+		"api:apps": "pnpm run api -- --filter apps",
+		"lint": "pnpm eslint ."
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/prozilla-os/ProzillaOS.git",
+		"directory": "docs"
+	},
+	"devDependencies": {
+		"@commander-js/extra-typings": "^14.0.0",
+		"@prozilla-os/app-center": "workspace:*",
+		"@prozilla-os/browser": "workspace:*",
+		"@prozilla-os/calculator": "workspace:*",
+		"@prozilla-os/core": "workspace:*",
+		"@prozilla-os/dev-tools": "workspace:*",
+		"@prozilla-os/file-explorer": "workspace:*",
+		"@prozilla-os/logic-sim": "workspace:*",
+		"@prozilla-os/media-viewer": "workspace:*",
+		"@prozilla-os/settings": "workspace:*",
+		"@prozilla-os/shared": "workspace:*",
+		"@prozilla-os/skins": "workspace:*",
+		"@prozilla-os/terminal": "workspace:*",
+		"@prozilla-os/text-editor": "workspace:*",
+		"@prozilla-os/code-editor": "workspace:*",
+		"@shikijs/types": "^3.22.0",
+		"@types/hast": "3.0.4",
+		"@types/markdown-it": "^14.1.2",
+		"@types/node": "^20.19.39",
+		"commander": "^14.0.3",
+		"medium-zoom": "^1.1.0",
+		"react": "^18.3.1",
+		"rimraf": "^5.0.10",
+		"typedoc": "^0.28.19",
+		"typedoc-plugin-markdown": "^4.11.0",
+		"typedoc-plugin-mdn-links": "^5.1.1",
+		"vite-node": "^2.1.9",
+		"vitepress": "2.0.0-alpha.17",
+		"vitepress-plugin-lightbox": "^1.0.3",
+		"vitepress-plugin-group-icons": "^1.7.5",
+		"vue": "^3.5.33"
+	}
+}
