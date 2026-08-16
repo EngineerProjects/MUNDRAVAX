@@ -13,6 +13,9 @@
 	"scripts": {
 		"preinstall": "npx only-allow pnpm",
 		"start": "pnpm run demo:start",
+		"tauri": "tauri",
+		"tauri:dev": "tauri dev",
+		"tauri:build": "tauri build",
 		"menu": "pnpm vite-node scripts/devMenu.ts",
 		"build": "turbo run build",
 		"stage": "turbo run root:stage",
@@ -75,6 +78,7 @@
 		"@prozilla-os/core": "workspace:*",
 		"@prozilla-os/dev-tools": "workspace:*",
 		"@prozilla-os/shared": "workspace:*",
+		"@tauri-apps/cli": "^2.11.4",
 		"@testing-library/dom": "^10.4.1",
 		"@testing-library/jest-dom": "^6.9.1",
 		"@testing-library/react": "^16.3.2",

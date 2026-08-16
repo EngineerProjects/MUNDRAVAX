@@ -104,6 +104,8 @@ function TaskbarRoot({ children, ...slots }: TaskbarProps): ReactNode {
 
 function TaskbarLayout({ Home, Search, Apps, Indicators }: InferSlots<TaskbarProps>) {
 	return <>
+		{/* Reserved for a future assistant/widget entry point, kept empty for now */}
+		<div className={useClassNames([styles.AgentSlot], "Taskbar", "AgentSlot")}/>
 		<div className={useClassNames([styles.Menus], "Taskbar", "MenuIcons")}>
 			<Home/>
 			<Search/>

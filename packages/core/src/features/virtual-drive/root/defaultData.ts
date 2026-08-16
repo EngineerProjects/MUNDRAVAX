@@ -93,21 +93,8 @@ export function loadDefaultData(systemManager: SystemManager, virtualRoot: Virtu
 
 			if (virtualDriveConfig.defaultData.includeDesktopFolder) {
 				userFolder.createFolder("Desktop", (desktopFolder) => {
-					desktopFolder.createFileLink("Info.md", (fileLink) => {
-						if (fileLink.isLink())
-							fileLink.setLinkedPath(linkedPaths.info);
-					}).createFileLink("Prozilla.md", (fileLink) => {
-						if (fileLink.isLink())
-							fileLink.setLinkedPath(linkedPaths.links);
-					}).createFolderLink("Pictures", (folderLink) => {
-						if (folderLink.isLink())
-							folderLink.setLinkedPath(linkedPaths.images);
-					}).createFolderLink("Documents", (folderLink) => {
-						if (folderLink.isLink())
-							folderLink.setLinkedPath(linkedPaths.documents);
-					}).createFile("Documentation", undefined, (file) => {
-						file.setSource(FILE_SCHEMES.external + "https://os.prozilla.dev/docs/");
-					});
+					// Intentionally no shortcuts to Pictures/Documents/Info.md/Prozilla.md/Documentation:
+					// those stay reachable through Files instead of duplicating them on the desktop.
 
 					appsConfig.apps.forEach((app) => {
 						if (!app.showDesktopIcon)

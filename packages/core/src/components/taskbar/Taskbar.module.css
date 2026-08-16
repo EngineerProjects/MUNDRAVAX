@@ -54,3 +54,9 @@
 	align-items: center;
 	height: 100%;
 }
+
+.AgentSlot {
+	flex: 0 0 auto;
+	width: 44rem;
+	height: 100%;
+}

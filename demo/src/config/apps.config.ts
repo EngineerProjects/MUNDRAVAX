@@ -1,31 +1,32 @@
-import { AppsConfig, browser, calculator, fileExplorer, mediaViewer, settings, terminal, textEditor, appCenter, codeEditor } from "prozilla-os";
+import { AppsConfig, browser, calculator, fileExplorer, mediaViewer, settings, terminal, textEditor, codeEditor } from "prozilla-os";
 import { NAME } from "./branding.config";
-import { wordle } from "@prozilla-os/wordle";
-import { ballMaze } from "@prozilla-os/ball-maze";
-import { minesweeper } from "@prozilla-os/minesweeper";
-import { logicSim } from "@prozilla-os/logic-sim";
-import { Skin, MacOsSkin, Windows95Skin, MinimalSkin, PixelSkin } from "@prozilla-os/skins";
+
+// Note: appCenter and logicSim packages are intentionally kept installed (see packages/apps/)
+// but not registered here, so they stay out of the UI without deleting any files.
+// Re-register them (or games/skin overrides from the ProzillaOS history) when needed.
 
 export const appsConfig = new AppsConfig({
 	apps: [
 		fileExplorer.setName("Files")
 			.setDescription("Browse and manage your virtual files on ProzillaOS.")
-			.setIconUrl("/assets/apps/icons/file-explorer.svg")
-			.setShowDesktopIcon(true),
+			.setIconUrl("/assets/apps/icons/file-explorer.svg"),
 		terminal.setName("Commands")
 			.setDescription("A command line tool inspired by the Unix shell that runs entirely in your browser using ProzillaOS. Allows you to interact and manipulate the virtual drive and run silly commands.")
 			.setIconUrl("/assets/apps/icons/terminal.svg")
-			.setShowDesktopIcon(true),
+			.setPinnedByDefault(false),
 		textEditor.setName("Notes")
 			.setDescription("Text editor for reading and writing text documents in a virtual file system using ProzillaOS.")
-			.setIconUrl("/assets/apps/icons/text-editor.svg"),
+			.setIconUrl("/assets/apps/icons/text-editor.svg")
+			.setPinnedByDefault(false),
 		codeEditor.setName("Code")
-			.setIconUrl("/assets/apps/icons/code-editor.svg"),
+			.setIconUrl("/assets/apps/icons/code-editor.svg")
+			.setPinnedByDefault(false),
 		settings.setName("Settings")
 			.setDescription(`Configure ${NAME}'s settings and customize your experience.`)
 			.setIconUrl("/assets/apps/icons/settings.svg"),
 		mediaViewer.setName("Photos")
-			.setIconUrl("/assets/apps/icons/media-viewer.svg"),
+			.setIconUrl("/assets/apps/icons/media-viewer.svg")
+			.setPinnedByDefault(false),
 		browser.setName("Browser")
 			.setDescription("Browse the internet.")
 			.setIconUrl("/assets/apps/icons/browser.svg")
@@ -33,51 +34,6 @@ export const appsConfig = new AppsConfig({
 		calculator.setName("Maths")
 			.setDescription("Simple calculator app.")
 			.setIconUrl("/assets/apps/icons/calculator.svg")
-			.setPinnedByDefault(true),
-		appCenter.setName("Apps")
-			.setDescription(`Browse and install ${NAME} apps.`)
 			.setPinnedByDefault(false),
-		wordle.setIconUrl("/assets/apps/icons/wordle.svg")
-			.addSkinOverride(MacOsSkin, {
-				iconUrl: Skin.assetUrl("/assets/skins/mac/apps/icons/wordle.svg"),
-			})
-			.addSkinOverride(MinimalSkin, {
-				iconUrl: Skin.assetUrl("/assets/skins/minimal/apps/icons/wordle.svg"),
-			})
-			.addSkinOverride(PixelSkin, {
-				iconUrl: Skin.assetUrl("/assets/skins/pixel/apps/icons/wordle.png"),
-			})
-			.setPinnedByDefault(false)
-			.setShowDesktopIcon(true),
-		ballMaze.setIconUrl("/assets/apps/icons/ball-maze.svg")
-			.addSkinOverride(MacOsSkin, {
-				iconUrl: Skin.assetUrl("/assets/skins/mac/apps/icons/ball-maze.svg"),
-			})
-			.addSkinOverride(MinimalSkin, {
-				iconUrl: Skin.assetUrl("/assets/skins/minimal/apps/icons/ball-maze.svg"),
-			})
-			.addSkinOverride(PixelSkin, {
-				iconUrl: Skin.assetUrl("/assets/skins/pixel/apps/icons/ball-maze.png"),
-			})
-			.setPinnedByDefault(false)
-			.setShowDesktopIcon(true),
-		minesweeper.setIconUrl("/assets/apps/icons/minesweeper.svg")
-			.addSkinOverride(MacOsSkin, {
-				iconUrl: Skin.assetUrl("/assets/skins/mac/apps/icons/minesweeper.svg"),
-			})
-			.addSkinOverride(Windows95Skin, {
-				iconUrl: Skin.assetUrl("/assets/skins/windows95/apps/icons/minesweeper.svg"),
-			})
-			.addSkinOverride(MinimalSkin, {
-				iconUrl: Skin.assetUrl("/assets/skins/minimal/apps/icons/minesweeper.svg"),
-			})
-			.addSkinOverride(PixelSkin, {
-				iconUrl: Skin.assetUrl("/assets/skins/pixel/apps/icons/minesweeper.png"),
-			})
-			.setPinnedByDefault(false)
-			.setShowDesktopIcon(true),
-		logicSim.setName("Logic Sim")
-			.setDescription("Create digital logic circuits using the online simulator.")
-			.setIconUrl("/assets/apps/icons/logic-sim.svg"),
 	],
 });
