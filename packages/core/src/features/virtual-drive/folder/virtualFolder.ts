@@ -118,6 +118,7 @@ export class VirtualFolder<E extends VirtualBaseEvents = VirtualBaseEvents> exte
 		callback?.(newFile);
 
 		newFile.confirmChanges();
+		this.emit(VirtualBase.UPDATE_EVENT);
 		return this;
 	}
 
@@ -152,6 +153,7 @@ export class VirtualFolder<E extends VirtualBaseEvents = VirtualBaseEvents> exte
 		callback?.(newFile);
 
 		newFile.confirmChanges();
+		this.emit(VirtualBase.UPDATE_EVENT);
 		return this;
 	}
 
@@ -193,8 +195,9 @@ export class VirtualFolder<E extends VirtualBaseEvents = VirtualBaseEvents> exte
 			this.addFolder(newFolder, false);
 		}
 		callback?.(newFolder);
-		
+
 		newFolder.confirmChanges();
+		this.emit(VirtualBase.UPDATE_EVENT);
 		return this;
 	}
 
@@ -227,8 +230,9 @@ export class VirtualFolder<E extends VirtualBaseEvents = VirtualBaseEvents> exte
 			newFolder.parent = this;
 		}
 		callback?.(newFolder);
-		
+
 		newFolder.confirmChanges();
+		this.emit(VirtualBase.UPDATE_EVENT);
 		return this;
 	}
 
