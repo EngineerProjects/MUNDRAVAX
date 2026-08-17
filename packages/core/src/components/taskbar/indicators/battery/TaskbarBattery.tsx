@@ -21,11 +21,13 @@ export function TaskbarBattery() {
 	// const [dischargingTime, setDischargingTime] = useState(0);
 
 	useEffect(() => {
-		const getBattery = (navigator as Navigator & { getBattery?: () => Promise<BatteryManager> }).getBattery;
-		if (!getBattery) return;
+		// Called as nav.getBattery() (not destructured) - this native method
+		// throws "Illegal invocation" if called without navigator as `this`.
+		const nav = navigator as Navigator & { getBattery?: () => Promise<BatteryManager> };
+		if (!nav.getBattery) return;
 
 		let cleanUp: (() => void) | undefined;
-		void getBattery().then((battery: BatteryManager) => {
+		void nav.getBattery().then((battery: BatteryManager) => {
 			const updateIsCharging = () => {
 				setIsCharging(battery.charging);
 			};
