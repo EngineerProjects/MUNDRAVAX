@@ -1,9 +1,9 @@
-import { ChangeEventHandler, FC, FormEvent, KeyboardEventHandler, useCallback, useEffect, useState } from "react";
+import { ChangeEventHandler, FC, FormEvent, KeyboardEventHandler, useCallback, useEffect, useRef, useState } from "react";
 import styles from "./FileExplorer.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowDownAZ, faArrowUp, faCaretLeft, faCaretRight, faCircleInfo, faCopy, faDesktop, faDownload, faFile, faFileLines, faFolder, faHouse, faImage, faList, faPen, faPlus, faScissors, faSearch, faTableCellsLarge, faTerminal, faTrash, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { QuickAccessButton } from "./QuickAccessButton";
-import { Actions, AppsConfig, ClickAction, CODE_EXTENSIONS, DialogBox, DirectoryList, Divider, DropdownAction, FileEventHandler, FolderEventHandler, ModalProps, ModalsConfig, OnSelectionChangeParams, useAlert, useContextMenu, useHistory, useSystemManager, useVirtualRoot, useWindowedModal, useWindowsManager, utilStyles, VirtualBase, VirtualFile, VirtualFolder, VirtualFolderLink, VirtualRoot, WindowedModal, WindowProps } from "@prozilla-os/core";
+import { Actions, AppsConfig, ClickAction, CODE_EXTENSIONS, DialogBox, DirectoryList, DirectoryListHandle, Divider, DropdownAction, FileEventHandler, FolderEventHandler, ModalProps, ModalsConfig, OnSelectionChangeParams, useAlert, useContextMenu, useHistory, useSystemManager, useVirtualRoot, useWindowedModal, useWindowsManager, utilStyles, VirtualFile, VirtualFolder, VirtualFolderLink, VirtualRoot, WindowedModal, WindowProps } from "@prozilla-os/core";
 import { SELECTOR_MODE } from "../constants/fileExplorer.const";
 import { FileProperties } from "./modals/file-properties/FileProperties";
 import { JSX } from "react/jsx-runtime";
@@ -19,10 +19,6 @@ export interface FileExplorerProps extends WindowProps {
 
 interface NewItemDialogProps extends ModalProps {
 	directory: VirtualFolder;
-}
-
-interface RenameItemDialogProps extends ModalProps {
-	item: VirtualBase;
 }
 
 interface FolderPropertiesDialogProps extends ModalProps {
@@ -146,72 +142,6 @@ function NewItemDialog({ directory, modal, ...props }: NewItemDialogProps) {
 	</WindowedModal>;
 }
 
-function RenameItemDialog({ item, modal, ...props }: RenameItemDialogProps) {
-	const [name, setName] = useState(item.id);
-	const [error, setError] = useState<string | null>(null);
-
-	const onSubmit = (event: FormEvent) => {
-		event.preventDefault();
-
-		const trimmedName = name.trim();
-		if (trimmedName === "") {
-			setError("Name is required.");
-			return;
-		}
-		if (trimmedName.includes("/") || trimmedName.includes("\\")) {
-			setError("Name cannot contain slashes.");
-			return;
-		}
-
-		const parent = item.parent;
-		if (parent == null) {
-			setError("This item cannot be renamed.");
-			return;
-		}
-
-		if (item.isFolder()) {
-			const existingFolder = parent.findSubFolder(trimmedName);
-			if (existingFolder != null && existingFolder !== item) {
-				setError("A folder with this name already exists.");
-				return;
-			}
-			item.setName(trimmedName);
-		} else if (item.isFile()) {
-			const { name: fileName, extension } = splitFileId(trimmedName);
-			const existingFile = parent.findFile(fileName, extension);
-			if (existingFile != null && existingFile !== item) {
-				setError("A file with this name already exists.");
-				return;
-			}
-			item.setName(fileName);
-			item.setExtension(extension);
-		}
-
-		modal?.close();
-	};
-
-	return <WindowedModal modal={modal} {...props}>
-		<form className={styles.NewItemDialog} onSubmit={onSubmit}>
-			<label className={styles.NewItemName}>
-				<span>Name</span>
-				<input
-					value={name}
-					autoFocus
-					onChange={(event) => {
-						setName(event.currentTarget.value);
-						setError(null);
-					}}
-				/>
-			</label>
-			{error != null && <p className={styles.NewItemError}>{error}</p>}
-			<div className={styles.NewItemActions}>
-				<button type="button" onClick={() => { modal?.close(); }}>Cancel</button>
-				<button type="submit">Rename</button>
-			</div>
-		</form>
-	</WindowedModal>;
-}
-
 function FolderPropertiesDialog({ folder, modal, ...props }: FolderPropertiesDialogProps) {
 	return <WindowedModal modal={modal} {...props}>
 		<div className={styles.PropertiesDialog}>
@@ -284,15 +214,7 @@ export function FileExplorer({ app, path: startPath, selectorMode, Footer, onSel
 				file.setContent("");
 		});
 	}, [currentDirectory]);
-	const openRenameDialog = useCallback((item: VirtualBase) => {
-		openWindowedModal({
-			title: `Rename ${item.id}`,
-			iconUrl: item.getIconUrl(),
-			size: new Vector2(340, 220),
-			Modal: (props: JSX.IntrinsicAttributes & ModalProps) =>
-				<RenameItemDialog item={item} {...props}/>,
-		});
-	}, [openWindowedModal]);
+	const directoryListRef = useRef<DirectoryListHandle>(null);
 	const openProperties = useCallback((file: VirtualFile) => {
 		openWindowedModal({
 			title: `${file.id} ${windowsConfig.titleSeparator} Properties`,
@@ -351,7 +273,7 @@ export function FileExplorer({ app, path: startPath, selectorMode, Footer, onSel
 			<ClickAction label="Cut" icon={faScissors} disabled/>
 			<ClickAction label="Copy" icon={faCopy} disabled/>
 			<ClickAction label="Rename" icon={faPen} disabled={!(props.triggerParams as VirtualFile).canBeEdited} onTrigger={(_event, file) => {
-				openRenameDialog(file as VirtualFile);
+				directoryListRef.current?.startRename(file as VirtualFile);
 			}}/>
 			{(props.triggerParams as VirtualFile).isDownloadable() && 
 				<ClickAction label="Export" icon={faUpload} onTrigger={(_event, file) => {
@@ -375,7 +297,7 @@ export function FileExplorer({ app, path: startPath, selectorMode, Footer, onSel
 			<ClickAction label="Cut" icon={faScissors} disabled/>
 			<ClickAction label="Copy" icon={faCopy} disabled/>
 			<ClickAction label="Rename" icon={faPen} disabled={!(props.triggerParams as VirtualFolder).canBeEdited} onTrigger={(_event, folder) => {
-				openRenameDialog(folder as VirtualFolder);
+				directoryListRef.current?.startRename(folder as VirtualFolder);
 			}}/>
 			<ClickAction label="Open in Terminal" icon={faTerminal} onTrigger={(_event, folder) => {
 				openTerminal(folder as VirtualFolder);
@@ -563,6 +485,7 @@ export function FileExplorer({ app, path: startPath, selectorMode, Footer, onSel
 					<QuickAccessButton name={"Documents"} onClick={() => { changeDirectory("~/Documents"); }} icon={faFileLines}/>
 				</div>
 				<DirectoryList
+					ref={directoryListRef}
 					directory={currentDirectory!}
 					active={active}
 					id="main"

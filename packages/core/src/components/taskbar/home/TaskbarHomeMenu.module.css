@@ -219,3 +219,23 @@
 	height: 1.1rem;
 	filter: var(--svg-drop-shadow-0);
 }
+
+.ShutdownConfirmText {
+	text-align: center;
+}
+
+.ShutdownConfirmActions {
+	display: flex;
+	gap: 0.5rem;
+	margin-top: 0.5rem;
+}
+
+.ShutdownConfirmActions button[data-danger=true] {
+	color: #fff;
+	background-color: #ff8068;
+}
+
+.ShutdownConfirmActions button[data-danger=true]:hover,
+.ShutdownConfirmActions button[data-danger=true]:focus-visible {
+	background-color: #e56750;
+}

@@ -73,6 +73,50 @@
 	word-wrap: break-word;
 }
 
+.RenameField {
+	position: relative;
+	width: 100%;
+	max-width: 100%;
+}
+
+.RenameField input {
+	width: 100%;
+	max-width: 100%;
+	padding: 0.1rem 0.3rem;
+	color: var(--foreground-color-0);
+	background: var(--background-color-2);
+	border: 1px solid var(--blue-0);
+	border-radius: var(--border-radius-0);
+	outline: none;
+	font: inherit;
+	text-align: center;
+}
+
+.ListView .RenameField input {
+	text-align: left;
+}
+
+.RenameField .RenameError {
+	position: absolute;
+	top: calc(100% + 0.2rem);
+	left: 50%;
+	z-index: 1;
+	width: max-content;
+	max-width: 12rem;
+	padding: 0.2rem 0.4rem;
+	color: #fff;
+	background-color: #ff8068;
+	border-radius: var(--border-radius-0);
+	transform: translateX(-50%);
+	font-size: 0.75rem;
+	white-space: normal;
+}
+
+.ListView .RenameField .RenameError {
+	left: 0;
+	transform: none;
+}
+
 .FileIcon, .FolderIcon {
 	width: calc(var(--scale) * 4.25);
 	height: calc(var(--scale) * 4.25);

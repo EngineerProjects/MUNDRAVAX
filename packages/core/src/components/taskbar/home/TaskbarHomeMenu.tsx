@@ -1,16 +1,39 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./TaskbarHomeMenu.module.css";
-import { faGear, faPowerOff, faSearch, faThumbTack, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRotateRight, faGear, faPowerOff, faSearch, faThumbTack, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { ReactSVG } from "react-svg";
 import { MouseEvent, useEffect, useMemo, useState } from "react";
 import { useClassNames, useContextMenu, useInstalledApps, useKeyboardListener, useSettingsManager, useSystemManager, useWindowsManager } from "../../../hooks";
-import { App, AppsConfig, closeViewport, Settings } from "../../../features";
+import { App, AppsConfig, closeViewport, isTauri, reloadViewport, Settings } from "../../../features";
 import { utilStyles } from "../../../styles";
 import { VectorImage } from "../../_utils/vector-image/VectorImage";
 import { useTaskbarContext } from "../taskbarSlots";
 import { useWindows } from "../../../hooks/windows/windowsContext";
 import { Actions, ClickAction, Divider } from "../../actions";
 import { pinAppToTaskbar } from "../apps/taskbarPins";
+import { tauriStorage } from "../../../features/storage/tauriStorage";
+import { useWindowedModal } from "../../../hooks/modals/windowedModal";
+import { DialogBox } from "../../modals/dialog-box/DialogBox";
+import { ModalProps } from "../../modals/ModalView";
+import { Vector2 } from "@prozilla-os/shared";
+
+interface ShutdownConfirmDialogProps extends ModalProps {
+	systemName: string;
+	onConfirm: () => void;
+}
+
+function ShutdownConfirmDialog({ systemName, onConfirm, modal, ...props }: ShutdownConfirmDialogProps) {
+	return <DialogBox modal={modal} {...props}>
+		<p className={styles.ShutdownConfirmText}>Are you sure you want to shut down {systemName}?</p>
+		<div className={styles.ShutdownConfirmActions}>
+			<button type="button" onClick={() => { modal?.close(); }}>Cancel</button>
+			<button type="button" data-danger="true" onClick={() => {
+				onConfirm();
+				modal?.close();
+			}}>Shut down</button>
+		</div>
+	</DialogBox>;
+}
 
 export function TaskbarHomeMenu() {
 	const { activeMenu, setActiveMenu, toggleMenu } = useTaskbarContext();
@@ -89,6 +112,47 @@ export function TaskbarHomeMenu() {
 	} });
 
 	const appTileClassName = useClassNames([styles.AppTile], "HomeMenu", "AppTile");
+	const { openWindowedModal } = useWindowedModal();
+
+	// Under Tauri, closing the window is intercepted (see ProzillaOS.tsx) to
+	// guarantee a final flush, so it can't be relied on as the only way out -
+	// these give the user a deliberate, always-available way to actually quit
+	// or restart the app instead of just simulating it in a browser tab.
+	const shutDown = () => {
+		if (!isTauri()) {
+			closeViewport(true, systemName);
+			return;
+		}
+
+		openWindowedModal({
+			title: "Shut down",
+			size: new Vector2(320, 180),
+			single: true,
+			Modal: (props: ModalProps) =>
+				<ShutdownConfirmDialog
+					{...props}
+					systemName={systemName}
+					onConfirm={() => {
+						void (async () => {
+							await tauriStorage.flush();
+							const { exit } = await import("@tauri-apps/plugin-process");
+							await exit(0);
+						})();
+					}}
+				/>,
+		});
+	};
+
+	const restart = async () => {
+		if (!isTauri()) {
+			reloadViewport();
+			return;
+		}
+
+		await tauriStorage.flush();
+		const { relaunch } = await import("@tauri-apps/plugin-process");
+		await relaunch();
+	};
 
 	useEffect(() => {
 		const settings = settingsManager?.getSettings(Settings.TASKBAR);
@@ -142,7 +206,10 @@ export function TaskbarHomeMenu() {
 						<FontAwesomeIcon icon={faGear}/>
 					</button>
 				}
-				<button tabIndex={tabIndex} title="Shut down" onClick={() => { closeViewport(true, systemName); }}>
+				<button tabIndex={tabIndex} title="Restart" onClick={() => { void restart(); }}>
+					<FontAwesomeIcon icon={faArrowRotateRight}/>
+				</button>
+				<button tabIndex={tabIndex} title="Shut down" onClick={shutDown}>
 					<FontAwesomeIcon icon={faPowerOff}/>
 				</button>
 			</div>

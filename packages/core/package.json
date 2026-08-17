@@ -31,6 +31,7 @@
 		"@prozilla-os/shared": "workspace:*",
 		"@prozilla-os/skins": "workspace:*",
 		"@tauri-apps/api": "^2.11.1",
+		"@tauri-apps/plugin-process": "^2.3.1",
 		"lz-string": "^1.5.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
