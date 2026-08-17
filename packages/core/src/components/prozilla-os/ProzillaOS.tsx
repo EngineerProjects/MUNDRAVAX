@@ -88,11 +88,26 @@ export const ProzillaOS = memo(function(props: ProzillaOSProps): ReactElement {
 
 		let unlisten: (() => void) | undefined;
 		let cancelled = false;
+		// Guards against ever getting stuck unable to close: if flush() throws,
+		// or if the programmatic close() below re-enters this handler, the
+		// second pass skips straight past preventDefault() and lets the window
+		// actually close instead of blocking forever.
+		let hasFlushed = false;
 
 		void getCurrentWindow().onCloseRequested(async (event) => {
+			if (hasFlushed)
+				return;
+
 			event.preventDefault();
-			await tauriStorage.flush();
-			await getCurrentWindow().close();
+			hasFlushed = true;
+
+			try {
+				await tauriStorage.flush();
+			} catch (error) {
+				console.error("Failed to flush storage before closing.", error);
+			} finally {
+				await getCurrentWindow().close();
+			}
 		}).then((fn) => {
 			if (cancelled) {
 				fn();

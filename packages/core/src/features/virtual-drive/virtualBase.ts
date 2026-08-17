@@ -2,6 +2,7 @@ import type { VirtualRoot } from "./root/virtualRoot";
 import type { VirtualFile, VirtualFileLink } from "./file";
 import type { VirtualFolder, VirtualFolderLink } from "./folder";
 import { EventEmitter } from "@prozilla-os/shared";
+import { isValidName } from "../_utils/path.utils";
 
 export interface VirtualBaseJson {
 	nam: string;
@@ -51,11 +52,11 @@ export class VirtualBase<E extends VirtualBaseEvents = VirtualBaseEvents> extend
 	}
 
 	setName(name: string): this {
-		if (this.name === name || !this.canBeEdited)
+		if (this.name === name || !this.canBeEdited || !isValidName(name))
 			return this;
 
 		this.name = name;
-		
+
 		this.confirmChanges();
 		return this;
 	}
@@ -159,6 +160,13 @@ export class VirtualBase<E extends VirtualBaseEvents = VirtualBaseEvents> extend
 
 		root.saveData();
 		this.emit(VirtualBase.UPDATE_EVENT);
+
+		// DirectoryList listens on the parent folder, not on individual
+		// items - without this, renaming/re-aliasing/re-iconing an item
+		// only updates it in memory, and the list showing it doesn't
+		// reflect the change until something unrelated re-renders it.
+		if (this.parent != null)
+			this.parent.emit(VirtualBase.UPDATE_EVENT);
 	}
 
 	/**
