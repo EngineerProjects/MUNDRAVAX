@@ -14,6 +14,7 @@ import { reloadViewport, ModalsManager, AppsConfig, Settings } from "../../featu
 import { VirtualFile } from "../../features/virtual-drive/file";
 import { VirtualFolder, VirtualFolderLink } from "../../features/virtual-drive/folder";
 import { useSettingsManager, useWindowsManager, useVirtualRoot, useWindowedModal, useContextMenu, useSystemManager } from "../../hooks";
+import { useWindows } from "../../hooks/windows/windowsContext";
 import { DirectoryList } from "../_utils";
 import { FileEventHandler, FolderEventHandler } from "../_utils/directory-list/DirectoryList";
 import { useClassNames } from "../../hooks";
@@ -26,6 +27,9 @@ export const Desktop = memo(() => {
 	const { desktopConfig, skin, appsConfig } = useSystemManager();
 	const settingsManager = useSettingsManager();
 	const windowsManager = useWindowsManager();
+	// Subscribed to (not just read) so this component re-renders when a window's
+	// focus changes - `active` below must react to that, not stay frozen at mount.
+	const windows = useWindows();
 	const virtualRoot = useVirtualRoot();
 
 	const [wallpaper, setWallpaper] = useState<string | null>(null);
@@ -182,6 +186,7 @@ export const Desktop = memo(() => {
 		>
 			{showIcons && <DirectoryList
 				directory={directory as VirtualFolder}
+				active={!windows?.some((windowItem) => windowItem.isFocused)}
 				className={styles.Content}
 				style={{
 					"--scale": `${iconScale}rem`,

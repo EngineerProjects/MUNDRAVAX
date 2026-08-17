@@ -34,3 +34,12 @@ export function formatShortcut(shortcut: string[]): string {
 
 	return specialKeys.concat(singleKeys).join("+");
 }
+
+/**
+ * Returns whether a keyboard event target is an element that accepts text
+ * input, so global shortcuts (e.g. Ctrl+A, Delete) can avoid hijacking it.
+ */
+export function isEditableTarget(target: EventTarget | null): boolean {
+	return target instanceof HTMLElement &&
+		(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target.isContentEditable);
+}

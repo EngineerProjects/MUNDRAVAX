@@ -7,6 +7,28 @@ import { Interactable } from "../interactable/Interactable";
 import { useClassNames } from "../../../hooks/_utils/classNames";
 import { removeFromArray, Vector2 } from "@prozilla-os/shared";
 import { VirtualBase } from "../../../features/virtual-drive/virtualBase";
+import { isEditableTarget } from "../../../features/_utils/keyboard.utils";
+import { useWindowedModal } from "../../../hooks/modals/windowedModal";
+import { DialogBox } from "../../modals/dialog-box/DialogBox";
+import { ModalProps } from "../../modals/ModalView";
+
+interface DeleteConfirmDialogProps extends ModalProps {
+	count: number;
+	onConfirm: () => void;
+}
+
+function DeleteConfirmDialog({ count, onConfirm, modal, ...props }: DeleteConfirmDialogProps) {
+	return <DialogBox modal={modal} {...props}>
+		<p className={styles.DeleteConfirmText}>Are you sure you want to delete {count} item{count === 1 ? "" : "s"}?</p>
+		<div className={styles.DeleteConfirmActions}>
+			<button type="button" onClick={() => { modal?.close(); }}>Cancel</button>
+			<button type="button" data-danger="true" onClick={() => {
+				onConfirm();
+				modal?.close();
+			}}>Delete</button>
+		</div>
+	</DialogBox>;
+}
 
 export interface OnSelectionChangeParams {
 	/** The selected files. */
@@ -23,6 +45,13 @@ export type FolderEventHandler = (event: Event, folder: VirtualFolder) => void;
 export interface DirectoryListProps {
 	/** The directory to display. */
 	directory: VirtualFolder;
+	/**
+	 * Whether this list should respond to global shortcuts (Ctrl+A, Delete).
+	 * Used to make sure only the focused window (or the desktop, when no
+	 * window is focused) reacts to them when multiple instances exist.
+	 * @default true
+	 */
+	active?: boolean;
 	/** Whether to show hidden files and folders. */
 	showHidden?: boolean;
 	/** `className` prop for folders. */
@@ -52,16 +81,20 @@ export interface DirectoryListProps {
 /**
  * Component that displays the contents of a directory.
  */
-export function DirectoryList({ directory, showHidden = false, folderClassName, fileClassName, className,
+export function DirectoryList({ directory, active = true, showHidden = false, folderClassName, fileClassName, className,
 	onContextMenuFile, onContextMenuFolder, onOpenFile, onOpenFolder, allowMultiSelect = true, onSelectionChange, filter = "", viewMode = "grid", sortBy = "name", ...props }: DirectoryListProps): ReactElement | null {
 	const [folders, setFolders] = useState<VirtualFolder[]>([]);
 	const [files, setFiles] = useState<VirtualFile[]>([]);
 	const [selectedFolders, setSelectedFolders] = useState<string[]>([]);
 	const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
 
+	const { openWindowedModal } = useWindowedModal();
+
 	const ref = useRef<HTMLDivElement>(null);
 	const [rectSelectStart, setRectSelectStart] = useState<Vector2 | null>(null);
 	const [rectSelectEnd, setRectSelectEnd] = useState<Vector2 | null>(null);
+	/** The selection to union new rectangle matches into (non-empty only when the drag started with Ctrl held). */
+	const rectSelectBaseRef = useRef<{ folders: string[]; files: string[]; }>({ folders: [], files: [] });
 
 	useEffect(() => {
 		onSelectionChange?.({ files: selectedFiles, folders: selectedFolders, directory });
@@ -76,21 +109,60 @@ export function DirectoryList({ directory, showHidden = false, folderClassName, 
 		clearSelection();
 	}, [directory]);
 
+	const applyRectSelection = (start: Vector2, end: Vector2) => {
+		if (ref.current == null)
+			return;
+
+		const left = Math.min(start.x, end.x);
+		const right = Math.max(start.x, end.x);
+		const top = Math.min(start.y, end.y);
+		const bottom = Math.max(start.y, end.y);
+
+		const matchedFolders: string[] = [];
+		const matchedFiles: string[] = [];
+
+		ref.current.querySelectorAll<HTMLElement>("[data-id]").forEach((element) => {
+			const rect = element.getBoundingClientRect();
+			const intersects = rect.left < right && rect.right > left && rect.top < bottom && rect.bottom > top;
+
+			if (!intersects || element.dataset.id == null)
+				return;
+
+			if (element.dataset.type === "folder") {
+				matchedFolders.push(element.dataset.id);
+			} else {
+				matchedFiles.push(element.dataset.id);
+			}
+		});
+
+		const base = rectSelectBaseRef.current;
+		setSelectedFolders([...new Set([...base.folders, ...matchedFolders])]);
+		setSelectedFiles([...new Set([...base.files, ...matchedFiles])]);
+	};
+
 	useEffect(() => {
+		// Minimum drag distance (in pixels) before a click is treated as a rectangle select,
+		// so a plain click on empty space doesn't briefly flash/apply an empty selection.
+		const DRAG_THRESHOLD = 4;
+
 		const onMoveRectSelect = (event: MouseEvent) => {
 			if (rectSelectStart == null)
 				return;
-	
+
+			const dx = Math.abs(event.clientX - rectSelectStart.x);
+			const dy = Math.abs(event.clientY - rectSelectStart.y);
+			if (rectSelectEnd == null && dx < DRAG_THRESHOLD && dy < DRAG_THRESHOLD)
+				return;
+
 			event.preventDefault();
-			setRectSelectEnd({ x: event.clientX, y: event.clientY } as Vector2);
+			const end = { x: event.clientX, y: event.clientY } as Vector2;
+			setRectSelectEnd(end);
+			applyRectSelection(rectSelectStart, end);
 		};
 		const onStopRectSelect = (event: MouseEvent) => {
-			if (rectSelectStart == null || rectSelectEnd == null) {
-				setRectSelectStart(null);
-				setRectSelectEnd(null);
+			if (rectSelectStart == null)
 				return;
-			}
-	
+
 			event.preventDefault();
 			setRectSelectStart(null);
 			setRectSelectEnd(null);
@@ -154,10 +226,13 @@ export function DirectoryList({ directory, showHidden = false, folderClassName, 
 	};
 
 	const onStartRectSelect = (event: MouseEvent) => {
-		if (event.button !== 0)
+		if (event.button !== 0 || !allowMultiSelect)
 			return;
 
 		event.preventDefault();
+		rectSelectBaseRef.current = event.ctrlKey
+			? { folders: selectedFolders, files: selectedFiles }
+			: { folders: [], files: [] };
 		setRectSelectStart({ x: event.clientX, y: event.clientY } as Vector2);
 	};
 
@@ -223,6 +298,67 @@ export function DirectoryList({ directory, showHidden = false, folderClassName, 
 		return left.id.localeCompare(right.id);
 	});
 
+	useEffect(() => {
+		if (!allowMultiSelect)
+			return;
+
+		const onKeyDown = (event: KeyboardEvent) => {
+			if (!active || isEditableTarget(event.target))
+				return;
+			if (!event.ctrlKey || event.key.toLowerCase() !== "a")
+				return;
+
+			event.preventDefault();
+			setSelectedFolders(visibleFolders.map((folder) => folder.id));
+			setSelectedFiles(visibleFiles.map((file) => file.id));
+		};
+
+		document.addEventListener("keydown", onKeyDown);
+		return () => {
+			document.removeEventListener("keydown", onKeyDown);
+		};
+	}, [active, allowMultiSelect, visibleFolders, visibleFiles]);
+
+	useEffect(() => {
+		const onKeyDown = (event: KeyboardEvent) => {
+			if (!active || isEditableTarget(event.target))
+				return;
+			if (event.key !== "Delete")
+				return;
+			if (selectedFolders.length === 0 && selectedFiles.length === 0)
+				return;
+
+			const foldersToDelete = folders.filter((folder) => selectedFolders.includes(folder.id) && folder.canBeDeleted);
+			const filesToDelete = files.filter((file) => selectedFiles.includes(file.id) && file.canBeDeleted);
+			const total = foldersToDelete.length + filesToDelete.length;
+
+			if (total === 0)
+				return;
+
+			event.preventDefault();
+
+			openWindowedModal({
+				title: "Confirm delete",
+				size: new Vector2(320, 180),
+				single: true,
+				Modal: (modalProps: ModalProps) =>
+					<DeleteConfirmDialog
+						{...modalProps}
+						count={total}
+						onConfirm={() => {
+							foldersToDelete.forEach((folder) => { folder.delete(); });
+							filesToDelete.forEach((file) => { file.delete(); });
+						}}
+					/>,
+			});
+		};
+
+		document.addEventListener("keydown", onKeyDown);
+		return () => {
+			document.removeEventListener("keydown", onKeyDown);
+		};
+	}, [active, selectedFolders, selectedFiles, folders, files, openWindowedModal]);
+
 	folderClassName = useClassNames(folderClassNames, "DirectoryList", "Folder");
 	fileClassName = useClassNames(fileClassNames, "DirectoryList", "File");
 
@@ -262,6 +398,8 @@ export function DirectoryList({ directory, showHidden = false, folderClassName, 
 				tabIndex={0}
 				className={folderClassName}
 				data-selected={selectedFolders.includes(folder.id)}
+				data-id={folder.id}
+				data-type="folder"
 				onContextMenu={(event: MouseEvent) => {
 					onContextMenuFolder?.(event, folder);
 				}}
@@ -292,6 +430,8 @@ export function DirectoryList({ directory, showHidden = false, folderClassName, 
 				tabIndex={0}
 				className={fileClassName}
 				data-selected={selectedFiles.includes(file.id)}
+				data-id={file.id}
+				data-type="file"
 				onContextMenu={(event: MouseEvent) => {
 					onContextMenuFile?.(event, file);
 				}}

@@ -238,7 +238,7 @@ function FolderPropertiesDialog({ folder, modal, ...props }: FolderPropertiesDia
 	</WindowedModal>;
 }
 
-export function FileExplorer({ app, path: startPath, selectorMode, Footer, onSelectionChange, onSelectionFinish }: FileExplorerProps) {
+export function FileExplorer({ app, path: startPath, selectorMode, Footer, onSelectionChange, onSelectionFinish, active }: FileExplorerProps) {
 	const isSelector = selectorMode != null && selectorMode !== SELECTOR_MODE.NONE;
 
 	const virtualRoot = useVirtualRoot();
@@ -563,7 +563,8 @@ export function FileExplorer({ app, path: startPath, selectorMode, Footer, onSel
 					<QuickAccessButton name={"Documents"} onClick={() => { changeDirectory("~/Documents"); }} icon={faFileLines}/>
 				</div>
 				<DirectoryList
-					directory={currentDirectory!} 
+					directory={currentDirectory!}
+					active={active}
 					id="main"
 					className={styles.Main}
 					showHidden={showHidden}
