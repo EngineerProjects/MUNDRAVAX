@@ -1,4 +1,4 @@
-import { AppsConfig, browser, calculator, fileExplorer, mediaViewer, settings, terminal, textEditor, codeEditor } from "prozilla-os";
+import { AppsConfig, browser, calculator, fileExplorer, mail, mediaViewer, settings, terminal, textEditor, codeEditor } from "prozilla-os";
 import { NAME } from "./branding.config";
 
 // Note: appCenter and logicSim packages are intentionally kept installed (see packages/apps/)
@@ -27,6 +27,11 @@ export const appsConfig = new AppsConfig({
 		mediaViewer.setName("Photos")
 			.setIconUrl("/assets/apps/icons/media-viewer.svg")
 			.setPinnedByDefault(false),
+		mail.setName("Mail")
+			.setDescription("Read and compose messages in Mundravax.")
+			.setIconUrl("/assets/apps/icons/mail.svg")
+			.setPinnedByDefault(false)
+			.setShowDesktopIcon(true),
 		browser.setName("Browser")
 			.setDescription("Browse the internet.")
 			.setIconUrl("/assets/apps/icons/browser.svg")

@@ -1,30 +1,190 @@
 .Button {
 	display: flex;
 	flex-direction: column;
+	justify-content: center;
+	min-width: 6.5rem;
+	padding: 0 0.75rem;
 	white-space: nowrap;
 	user-select: none;
 }
 
 .Button > p {
 	margin: 0;
+	line-height: 1.2;
 }
 
 .Menu > div {
-	display: flex;
-	gap: 0.5rem;
-	flex-direction: column;
-	align-items: flex-start;
-	padding: 0.5rem 1rem;
+	display: grid;
+	grid-template-rows: minmax(10rem, auto) auto;
+	gap: 0.75rem;
+	width: min(26rem, calc(100vw - 1rem));
+	max-height: calc(100vh - var(--taskbar-height) - 1rem);
+	padding: 0.75rem;
+	overflow: auto;
+	background:
+		linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 18%),
+		rgba(15, 18, 22, 0.88);
+	color: var(--foreground-color-0);
 }
 
-.Time, .Date {
+.Notifications,
+.CalendarPanel {
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 0.5rem;
+	background: rgba(255, 255, 255, 0.045);
+	box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.2);
+	overflow: hidden;
+}
+
+.PanelHeader,
+.DateHeader,
+.MonthHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+}
+
+.PanelHeader {
+	padding: 1rem;
+}
+
+.PanelHeader h2 {
+	margin: 0;
+	font-size: 1rem;
+	font-weight: 600;
+}
+
+.PanelHeader button,
+.MonthHeader button {
+	display: grid;
+	place-items: center;
+	border-radius: 0.375rem;
+	background: rgba(255, 255, 255, 0.08);
+}
+
+.PanelHeader button {
+	min-height: 2rem;
+	padding: 0 0.75rem;
+}
+
+.EmptyNotifications {
+	display: flex;
+	align-items: center;
+	gap: 0.875rem;
+	margin: 0 0.75rem 0.75rem;
+	padding: 1rem;
+	border-radius: 0.375rem;
+	background: rgba(0, 0, 0, 0.16);
+}
+
+.EmptyNotifications svg {
+	width: 1rem;
+	color: rgba(255, 255, 255, 0.62);
+}
+
+.EmptyNotifications div {
+	display: flex;
+	flex-direction: column;
+	gap: 0.2rem;
+	min-width: 0;
+}
+
+.EmptyNotifications strong,
+.EmptyNotifications span {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.EmptyNotifications span {
+	color: rgba(255, 255, 255, 0.62);
+	font-size: 0.85rem;
+}
+
+.DateHeader {
+	padding: 1rem;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.DateHeader p,
+.DateHeader span {
 	margin: 0;
 }
 
-.Time {
-	font-size: 1.5rem;
+.DateHeader p {
+	font-size: 1rem;
+	font-weight: 600;
 }
 
-.Date {
-	opacity: 0.5;
+.DateHeader span {
+	color: rgba(255, 255, 255, 0.7);
+	font-variant-numeric: tabular-nums;
+}
+
+.MonthHeader {
+	padding: 1rem 1rem 0.625rem;
+}
+
+.MonthHeader strong {
+	font-size: 1rem;
+}
+
+.MonthHeader div {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.MonthHeader button {
+	width: 2rem;
+	height: 2rem;
+	padding: 0;
+}
+
+.CalendarGrid {
+	display: grid;
+	grid-template-columns: repeat(7, minmax(0, 1fr));
+	gap: 0.35rem;
+	padding: 0 1rem 1rem;
+}
+
+.WeekDay,
+.Day {
+	display: grid;
+	place-items: center;
+	aspect-ratio: 1;
+	min-width: 0;
+	border-radius: 50%;
+	font-size: 0.9rem;
+}
+
+.WeekDay {
+	color: rgba(255, 255, 255, 0.72);
+	font-weight: 600;
+}
+
+.Day {
+	padding: 0;
+	color: var(--foreground-color-0);
+	font-variant-numeric: tabular-nums;
+}
+
+.Day:hover,
+.Day:focus-visible {
+	background: rgba(255, 255, 255, 0.1);
+}
+
+.OutsideMonth {
+	color: rgba(255, 255, 255, 0.32);
+}
+
+.Today {
+	background: #ff8068;
+	color: #1b1010;
+	font-weight: 700;
+}
+
+.Today:hover,
+.Today:focus-visible {
+	background: #ff927e;
 }

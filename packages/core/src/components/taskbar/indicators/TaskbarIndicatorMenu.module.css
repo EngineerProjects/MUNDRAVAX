@@ -1,7 +1,7 @@
 .IndicatorMenuContainer {
 	position: absolute;
-	right: 0;
-	bottom: 100%;
+	right: 0.5rem;
+	bottom: calc(100% + 0.5rem);
 	height: auto !important;
 	overflow: hidden;
 }
@@ -18,15 +18,14 @@
 .IndicatorMenu {
 	opacity: 1;
 	display: flex;
-	border-top-left-radius: var(--border-radius-1);
-	border-top-right-radius: var(--border-radius-1);
-	border-bottom-left-radius: var(--border-radius-1);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 0.625rem;
 	backdrop-filter: var(--taskbar-filter);
 	transform: none;
 	transition: opacity var(--transition-duration-1) var(--ease-in-out-default),
 		transform var(--transition-duration-1) var(--ease-in-out-default);
 	overflow: hidden;
-	resize: horizontal;
+	box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.32);
 }
 
 .IndicatorMenu::after {

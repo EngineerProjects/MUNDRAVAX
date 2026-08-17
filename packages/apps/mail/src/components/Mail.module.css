@@ -1,0 +1,271 @@
+.Mail {
+	display: grid;
+	grid-template-columns: 13rem minmax(16rem, 22rem) minmax(0, 1fr);
+	width: 100%;
+	height: 100%;
+	min-height: 0;
+	background: #0d1218;
+	color: #e9f4ff;
+}
+
+.Sidebar {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	padding: 1rem 0.75rem;
+	border-right: 1px solid rgba(255, 255, 255, 0.08);
+	background: #121922;
+}
+
+.ComposeButton,
+.Sidebar nav button,
+.MessageList button,
+.Reader button {
+	border: none;
+	color: inherit;
+	font-family: inherit;
+	cursor: pointer;
+}
+
+.ComposeButton {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	min-height: 2.4rem;
+	border-radius: 0.4rem;
+	background: #4d9cff;
+	color: #06111d;
+	font-weight: 700;
+}
+
+.Sidebar nav {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.Sidebar nav button {
+	display: grid;
+	grid-template-columns: 1.2rem minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 0.55rem;
+	min-height: 2.25rem;
+	padding: 0 0.65rem;
+	border-radius: 0.35rem;
+	background: transparent;
+	text-align: left;
+}
+
+.Sidebar nav button:hover,
+.Sidebar nav button:focus-visible,
+.Sidebar nav button.ActiveFolder {
+	background: rgba(255, 255, 255, 0.08);
+}
+
+.Sidebar small {
+	color: rgba(233, 244, 255, 0.55);
+}
+
+.MessageList {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	min-height: 0;
+	border-right: 1px solid rgba(255, 255, 255, 0.08);
+	background: #0f151d;
+}
+
+.MessageList header {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	padding: 1rem;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.MessageList h1 {
+	margin: 0;
+	font-size: 1.2rem;
+}
+
+.MessageList label {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	height: 2rem;
+	padding: 0 0.6rem;
+	border-radius: 0.35rem;
+	background: #19232e;
+	color: rgba(233, 244, 255, 0.62);
+}
+
+.MessageList input {
+	min-width: 0;
+	width: 100%;
+	border: none;
+	outline: none;
+	background: transparent;
+	color: #e9f4ff;
+	font-family: inherit;
+}
+
+.Messages {
+	min-height: 0;
+	overflow: auto;
+}
+
+.Messages button {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+	width: 100%;
+	padding: 0.85rem 1rem;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+	background: transparent;
+	text-align: left;
+}
+
+.Messages button:hover,
+.Messages button:focus-visible,
+.Messages button.ActiveMessage {
+	background: rgba(255, 255, 255, 0.075);
+}
+
+.Messages button[data-unread="true"] strong,
+.Messages button[data-unread="true"] p {
+	color: #ffffff;
+	font-weight: 800;
+}
+
+.Messages button > div {
+	display: flex;
+	justify-content: space-between;
+	gap: 0.75rem;
+}
+
+.Messages strong,
+.Messages p,
+.Messages small {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.Messages p {
+	margin: 0;
+	color: rgba(233, 244, 255, 0.88);
+	font-weight: 650;
+}
+
+.Messages span,
+.Messages small {
+	color: rgba(233, 244, 255, 0.56);
+}
+
+.EmptyList,
+.EmptyReader {
+	margin: 0;
+	padding: 2rem;
+	color: rgba(233, 244, 255, 0.58);
+}
+
+.Reader {
+	min-width: 0;
+	min-height: 0;
+	background:
+		linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 14rem),
+		#0d1218;
+}
+
+.MessageReader,
+.Composer {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	min-height: 0;
+}
+
+.MessageReader header,
+.Composer header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: 1.25rem 1.5rem;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.MessageReader h2,
+.Composer h2 {
+	margin: 0;
+	font-size: 1.35rem;
+}
+
+.MessageReader header p {
+	margin: 0.35rem 0 0;
+	color: rgba(233, 244, 255, 0.58);
+}
+
+.Reader button {
+	display: flex;
+	align-items: center;
+	gap: 0.45rem;
+	min-height: 2rem;
+	padding: 0 0.7rem;
+	border-radius: 0.35rem;
+	background: rgba(255, 255, 255, 0.08);
+}
+
+.Reader button:hover,
+.Reader button:focus-visible {
+	background: rgba(255, 255, 255, 0.14);
+}
+
+.MessageBody {
+	padding: 1.25rem 1.5rem;
+	overflow: auto;
+	line-height: 1.6;
+}
+
+.MessageBody p {
+	margin: 0 0 0.75rem;
+}
+
+.Composer {
+	padding: 0;
+}
+
+.Composer input,
+.Composer textarea {
+	width: calc(100% - 3rem);
+	margin: 0 1.5rem;
+	padding: 0.85rem 0;
+	border: none;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	outline: none;
+	background: transparent;
+	color: #e9f4ff;
+	font-family: inherit;
+}
+
+.Composer textarea {
+	flex: 1;
+	min-height: 0;
+	padding-top: 1rem;
+	border-bottom: none;
+	resize: none;
+	line-height: 1.55;
+}
+
+@media (max-width: 760px) {
+	.Mail {
+		grid-template-columns: 4rem minmax(12rem, 18rem) minmax(0, 1fr);
+	}
+
+	.Sidebar nav button span,
+	.Sidebar nav button small,
+	.ComposeButton {
+		font-size: 0;
+	}
+}

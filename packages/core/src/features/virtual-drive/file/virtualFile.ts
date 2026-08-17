@@ -41,6 +41,15 @@ export class VirtualFile extends VirtualBase<VirtualFileEvents> {
 		return super.setAlias(alias);
 	}
 
+	setExtension(extension?: string): this {
+		if (this.extension === extension || !this.canBeEdited)
+			return this;
+
+		this.extension = extension;
+		this.confirmChanges();
+		return this;
+	}
+
 	/**
 	 * Sets the source of this file and removes the content.
 	 */

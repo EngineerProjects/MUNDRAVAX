@@ -170,7 +170,8 @@ export const Desktop = memo(() => {
 		void settings?.set("wallpaper", skin.defaultWallpaper);
 	};
 
-	const iconScale = 1 + ((isValidInteger(iconSize) ? iconSize : desktopConfig.defaultIconSize) - 1) / 5;
+	const iconSizeIndex = isValidInteger(iconSize) ? iconSize : desktopConfig.defaultIconSize;
+	const iconScale = [0.85, 1.15, 1.55][iconSizeIndex] ?? 1.15;
 	const wallpaperClassName = useClassNames([styles.Wallpaper], "Desktop", "Wallpaper");
 
 	return <>

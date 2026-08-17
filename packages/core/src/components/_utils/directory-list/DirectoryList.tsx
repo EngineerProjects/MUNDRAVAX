@@ -45,6 +45,7 @@ export interface DirectoryListProps {
 	onSelectionChange?: (params: OnSelectionChangeParams) => void;
 	filter?: string;
 	viewMode?: "grid" | "list";
+	sortBy?: "name" | "type";
 	[key: string]: unknown;
 }
 
@@ -52,7 +53,7 @@ export interface DirectoryListProps {
  * Component that displays the contents of a directory.
  */
 export function DirectoryList({ directory, showHidden = false, folderClassName, fileClassName, className,
-	onContextMenuFile, onContextMenuFolder, onOpenFile, onOpenFolder, allowMultiSelect = true, onSelectionChange, filter = "", viewMode = "grid", ...props }: DirectoryListProps): ReactElement | null {
+	onContextMenuFile, onContextMenuFolder, onOpenFile, onOpenFolder, allowMultiSelect = true, onSelectionChange, filter = "", viewMode = "grid", sortBy = "name", ...props }: DirectoryListProps): ReactElement | null {
 	const [folders, setFolders] = useState<VirtualFolder[]>([]);
 	const [files, setFiles] = useState<VirtualFile[]>([]);
 	const [selectedFolders, setSelectedFolders] = useState<string[]>([]);
@@ -153,6 +154,9 @@ export function DirectoryList({ directory, showHidden = false, folderClassName, 
 	};
 
 	const onStartRectSelect = (event: MouseEvent) => {
+		if (event.button !== 0)
+			return;
+
 		event.preventDefault();
 		setRectSelectStart({ x: event.clientX, y: event.clientY } as Vector2);
 	};
@@ -207,6 +211,17 @@ export function DirectoryList({ directory, showHidden = false, folderClassName, 
 	const visibleFiles = normalizedFilter
 		? files.filter((file) => file.id.toLowerCase().includes(normalizedFilter))
 		: files;
+
+	visibleFolders.sort((left, right) => left.name.localeCompare(right.name));
+	visibleFiles.sort((left, right) => {
+		if (sortBy === "type") {
+			const typeCompare = (left.extension ?? "").localeCompare(right.extension ?? "");
+			if (typeCompare !== 0)
+				return typeCompare;
+		}
+
+		return left.id.localeCompare(right.id);
+	});
 
 	folderClassName = useClassNames(folderClassNames, "DirectoryList", "Folder");
 	fileClassName = useClassNames(fileClassNames, "DirectoryList", "File");

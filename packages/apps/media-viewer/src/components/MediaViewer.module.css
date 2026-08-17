@@ -13,6 +13,171 @@
 	object-fit: contain;
 }
 
+.PhotosApp {
+	display: grid;
+	grid-template-rows: minmax(0, 1fr) auto;
+	width: 100%;
+	height: 100%;
+	min-height: 0;
+	background: #0b1117;
+	color: #e8f4ff;
+}
+
+.PhotoStage {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 0;
+	padding: 1.25rem;
+	overflow: hidden;
+	background:
+		linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 24%),
+		#0b1117;
+}
+
+.PhotoStage img {
+	max-width: 100%;
+	max-height: 100%;
+	object-fit: contain;
+	border-radius: 0.375rem;
+	box-shadow: 0 1.25rem 3rem rgba(0, 0, 0, 0.35);
+}
+
+.NavButton {
+	position: absolute;
+	top: 50%;
+	z-index: 1;
+	display: grid;
+	place-items: center;
+	width: 2.25rem;
+	height: 2.25rem;
+	padding: 0;
+	border: 1px solid rgba(232, 244, 255, 0.14);
+	border-radius: 50%;
+	background: rgba(16, 24, 32, 0.82);
+	color: #e8f4ff;
+	transform: translateY(-50%);
+	cursor: pointer;
+	font-size: 1.7rem;
+	line-height: 1;
+}
+
+.NavButton:hover,
+.NavButton:focus-visible {
+	background: rgba(42, 57, 72, 0.92);
+}
+
+.Previous {
+	left: 1rem;
+}
+
+.Next {
+	right: 1rem;
+}
+
+.PhotoStrip {
+	display: grid;
+	grid-template-columns: minmax(8rem, 16rem) minmax(0, 1fr);
+	gap: 1rem;
+	align-items: center;
+	min-height: 5.25rem;
+	padding: 0.75rem 1rem;
+	border-top: 1px solid rgba(232, 244, 255, 0.09);
+	background: rgba(17, 25, 33, 0.96);
+}
+
+.PhotoStrip > div {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	min-width: 0;
+}
+
+.PhotoStrip strong,
+.PhotoStrip span {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.PhotoStrip span {
+	color: rgba(232, 244, 255, 0.64);
+	font-size: 0.85rem;
+}
+
+.PhotoStrip ul {
+	display: flex;
+	gap: 0.5rem;
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	overflow-x: auto;
+	list-style: none;
+}
+
+.PhotoStrip li {
+	flex: 0 0 auto;
+}
+
+.PhotoStrip button {
+	width: 4.5rem;
+	height: 3.25rem;
+	padding: 0;
+	border: 2px solid transparent;
+	border-radius: 0.375rem;
+	background: #17212c;
+	cursor: pointer;
+	overflow: hidden;
+}
+
+.PhotoStrip button:hover,
+.PhotoStrip button:focus-visible,
+.PhotoStrip button.ActiveThumbnail {
+	border-color: #66d9ff;
+}
+
+.PhotoStrip button img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.EmptyState {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	padding: 2rem;
+	background: #0b1117;
+	color: #e8f4ff;
+	text-align: center;
+}
+
+.EmptyStateIcon {
+	width: 3rem;
+	height: 3rem;
+	margin-bottom: 1rem;
+	border-radius: 0.5rem;
+	background:
+		linear-gradient(135deg, transparent 58%, #9be264 59% 76%, transparent 77%),
+		radial-gradient(circle at 70% 32%, #ffd54a 0 11%, transparent 12%),
+		linear-gradient(135deg, #43a7ff, #62e6d5);
+	box-shadow: inset 0 0 0 0.25rem rgba(11, 17, 23, 0.5);
+}
+
+.EmptyState h2 {
+	margin: 0;
+	font-size: 1.35rem;
+}
+
+.EmptyState p {
+	margin: 0.5rem 0 0;
+	color: rgba(232, 244, 255, 0.66);
+}
+
 .VideoViewer, .AudioViewer {
 	display: flex;
 	flex-direction: column;

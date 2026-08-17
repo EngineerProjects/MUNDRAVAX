@@ -704,6 +704,52 @@ importers:
         specifier: ^2.2.2
         version: 2.2.2(vite@7.3.2(@types/node@20.19.39)(lightningcss@1.32.0)(yaml@2.8.4))
 
+  packages/apps/mail:
+    dependencies:
+      '@fortawesome/free-solid-svg-icons':
+        specifier: ^7.2.0
+        version: 7.2.0
+      '@fortawesome/react-fontawesome':
+        specifier: ^3.3.1
+        version: 3.3.1(@fortawesome/fontawesome-svg-core@7.2.0)(react@18.3.1)
+      '@prozilla-os/core':
+        specifier: workspace:*
+        version: link:../../core
+      '@prozilla-os/shared':
+        specifier: workspace:*
+        version: link:../../shared
+      '@prozilla-os/skins':
+        specifier: workspace:*
+        version: link:../../skins
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+    devDependencies:
+      '@prozilla-os/dev-tools':
+        specifier: workspace:*
+        version: link:../../dev-tools
+      '@types/node':
+        specifier: ^20.19.39
+        version: 20.19.39
+      '@types/react':
+        specifier: ^18.3.28
+        version: 18.3.28
+      '@vitejs/plugin-react-swc':
+        specifier: ^3.11.0
+        version: 3.11.0(vite@7.3.2(@types/node@20.19.39)(lightningcss@1.32.0)(yaml@2.8.4))
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vite:
+        specifier: ^7.3.2
+        version: 7.3.2(@types/node@20.19.39)(lightningcss@1.32.0)(yaml@2.8.4)
+      vite-plugin-dts:
+        specifier: ^4.5.4
+        version: 4.5.4(@types/node@20.19.39)(rollup@4.60.3)(typescript@5.9.3)(vite@7.3.2(@types/node@20.19.39)(lightningcss@1.32.0)(yaml@2.8.4))
+      vite-plugin-lib-inject-css:
+        specifier: ^2.2.2
+        version: 2.2.2(vite@7.3.2(@types/node@20.19.39)(lightningcss@1.32.0)(yaml@2.8.4))
+
   packages/apps/media-viewer:
     dependencies:
       '@prozilla-os/core':
@@ -1081,6 +1127,9 @@ importers:
       '@prozilla-os/file-explorer':
         specifier: workspace:*
         version: link:../apps/file-explorer
+      '@prozilla-os/mail':
+        specifier: workspace:*
+        version: link:../apps/mail
       '@prozilla-os/media-viewer':
         specifier: workspace:*
         version: link:../apps/media-viewer
