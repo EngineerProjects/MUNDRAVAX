@@ -1,4 +1,4 @@
-import { WindowProps } from "../../components";
+import type { WindowProps } from "../../components";
 import { FC } from "react";
 import { APP_CATEGORIES } from "../../constants/apps.const";
 import { mergeDeep, Vector2 } from "@prozilla-os/shared";

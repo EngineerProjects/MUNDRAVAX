@@ -29,7 +29,6 @@ const COMMON_ITEMS: SidebarItem[] = [
 			{ text: "File System", link: "/file-system" },
 			{ text: "Style Overrides", link: "/style-overrides", draft: true },
 			{ text: "Writing Tests", link: "/testing", draft: true },
-			{ text: "Logging and Debugging", link: "/logging", draft: true },
 			{
 				text: "Advanced",
 				collapsed: true,

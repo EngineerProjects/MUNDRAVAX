@@ -1,6 +1,6 @@
-import { VirtualRoot } from "./root/virtualRoot";
-import { VirtualFile, VirtualFileLink } from "./file";
-import { VirtualFolder, VirtualFolderLink } from "./folder";
+import type { VirtualRoot } from "./root/virtualRoot";
+import type { VirtualFile, VirtualFileLink } from "./file";
+import type { VirtualFolder, VirtualFolderLink } from "./folder";
 import { EventEmitter } from "@prozilla-os/shared";
 
 export interface VirtualBaseJson {
@@ -62,7 +62,7 @@ export class VirtualBase<E extends VirtualBaseEvents = VirtualBaseEvents> extend
 
 	setAlias(alias: string): this {
 		if (this.alias === alias || !this.canBeEdited)
-			return this;;
+			return this;
 
 		this.alias = alias;
 		this.getRoot().addShortcut(alias, this as never);

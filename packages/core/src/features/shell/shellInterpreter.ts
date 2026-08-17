@@ -7,7 +7,8 @@ import { ShellParser } from "./shellParser";
 import { ArithmeticParser } from "./arithmetic/arithmeticParser";
 import { ShellEnvironment } from "./shellEnvironment";
 import { ExecutableResolver } from "./executableResolver";
-import { FileInputStream, FileOutputStream, ShellAST } from ".";
+import { FileInputStream, FileOutputStream } from "./streams/fileStreams";
+import * as ShellAST from "./shellAST";
 import { Result } from "@prozilla-os/shared";
 
 /**

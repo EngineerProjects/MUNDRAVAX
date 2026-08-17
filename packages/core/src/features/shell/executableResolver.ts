@@ -1,6 +1,6 @@
 import { Result } from "@prozilla-os/shared";
 import { VirtualFile, VirtualFolder } from "../virtual-drive";
-import { Command } from "./command";
+import type { Command } from "./command";
 import { ShellEnvironment } from "./shellEnvironment";
 
 const modules = import.meta.glob("./commands/*.ts");

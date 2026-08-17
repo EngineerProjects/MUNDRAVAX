@@ -1,5 +1,5 @@
 import { proxy } from "valtio";
-import { ShellAST } from ".";
+import type { ShellAST } from ".";
 
 /**
  * Manages environment variabels for {@link Shell}.

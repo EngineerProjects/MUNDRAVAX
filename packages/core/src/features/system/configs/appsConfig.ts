@@ -1,7 +1,7 @@
 import { APP_CATEGORIES } from "../../../constants/apps.const";
-import { App, SystemManager } from "../../";
+import type { App, SystemManager } from "../../";
 import { loadApp, type LoadAppOptions } from "../../apps/appLoader";
-import { WindowProps } from "../../../components";
+import type { WindowProps } from "../../../components";
 import { EventEmitter } from "@prozilla-os/shared";
 
 export interface AppsConfigEvents {

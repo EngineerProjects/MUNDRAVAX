@@ -1,4 +1,4 @@
-import { ShellContext } from "./shell";
+import type { ShellContext } from "./shell";
 
 /**
  * Represents a command-line flag or parameter.

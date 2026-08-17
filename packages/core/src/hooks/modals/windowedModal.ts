@@ -3,7 +3,7 @@ import { useModalsManager } from "./modalsManagerContext";
 import { ModalProps } from "../../components/modals/ModalView";
 import { Modal } from "../../features/modals/modal";
 import { useSystemManager } from "../system/systemManagerContext";
-import { WindowProps } from "../../components";
+import type { WindowProps } from "../../components";
 import { Vector2 } from "@prozilla-os/shared";
 
 export interface OpenWindowedModalParams {

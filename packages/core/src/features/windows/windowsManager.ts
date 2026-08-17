@@ -2,7 +2,7 @@ import { randomRange, Vector2 } from "@prozilla-os/shared";
 import { App, openUrl } from "../";
 import { SystemManager } from "../system/systemManager";
 import { TrackingManager } from "../tracking/trackingManager";
-import { VirtualFile } from "../virtual-drive/file";
+import type { VirtualFile } from "../virtual-drive/file";
 import { FILE_SCHEMES } from "../../constants/virtualDrive.const";
 
 export interface WindowOptions {

@@ -36,6 +36,7 @@ These applications are included in the `prozilla-os` bundle.
 | [`@prozilla-os/calculator`](./apps/calculator/) | Calculator app |
 | [`@prozilla-os/app-center`](./apps/app-center/) | App center |
 | [`@prozilla-os/code-editor`](./apps/code-editor/) | Code editor app |
+| [`@prozilla-os/mail`](./apps/mail/) | Mail app |
 
 ### Secondary applications
 
