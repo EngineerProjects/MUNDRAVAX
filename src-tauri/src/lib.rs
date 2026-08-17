@@ -19,6 +19,9 @@ pub fn run() {
       commands::load_drive,
       commands::save_drive,
       commands::clear_drive,
+      commands::read_drive_file,
+      commands::write_drive_file,
+      commands::delete_drive_file,
       commands::get_volume,
       commands::set_volume,
     ])

@@ -8,6 +8,7 @@ import { VirtualFile, VirtualFileLink } from "../file";
 import { SystemManager } from "../../system/systemManager";
 import { VirtualBaseEvents } from "../virtualBase";
 import { VirtualDriveStorage } from "../virtualDriveStorage";
+import { isValidName as isValidPathSegment } from "../../_utils/path.utils";
 
 export interface VirtualRootJson extends VirtualFolderJson {
 	scs: Record<string, string>;
@@ -205,19 +206,16 @@ export class VirtualRoot extends VirtualFolder<VirtualRootEvents> {
 		}
 	}
 
-	static isValidName(_name: string) {
-		// TO DO
-		return true;
+	static isValidName(name: string) {
+		return isValidPathSegment(name);
 	}
 
-	static isValidFileName(_name: string) {
-		// TO DO
-		return true;
+	static isValidFileName(name: string) {
+		return isValidPathSegment(name);
 	}
 
-	static isValidFolderName(_name: string) {
-		// TO DO
-		return true;
+	static isValidFolderName(name: string) {
+		return isValidPathSegment(name);
 	}
 
 	get path() {

@@ -5,6 +5,7 @@ import { VirtualFolderLink } from ".";
 import { VirtualFile, VirtualFileLink } from "../file";
 import { AppsConfig } from "../../system/configs";
 import { removeFromArray } from "@prozilla-os/shared";
+import { isValidName } from "../../_utils/path.utils";
 
 export interface VirtualFolderJson extends VirtualBaseJson {
 	fls?: VirtualFileJson[];
@@ -112,6 +113,9 @@ export class VirtualFolder<E extends VirtualBaseEvents = VirtualBaseEvents> exte
 
 		let newFile = this.findFile(name, extension);
 		if (newFile == null) {
+			if (!isValidName(name))
+				return this;
+
 			newFile = new VirtualFile(name, extension);
 			this.addFile(newFile, false);
 		}
@@ -146,6 +150,9 @@ export class VirtualFolder<E extends VirtualBaseEvents = VirtualBaseEvents> exte
 
 		let newFile = this.findFile(name);
 		if (newFile == null) {
+			if (!isValidName(name))
+				return this;
+
 			newFile = new VirtualFileLink(name);
 			this.files.push(newFile);
 			newFile.parent = this;
@@ -191,6 +198,9 @@ export class VirtualFolder<E extends VirtualBaseEvents = VirtualBaseEvents> exte
 
 		let newFolder = this.findSubFolder(name);
 		if (newFolder == null) {
+			if (!isValidName(name))
+				return this;
+
 			newFolder = new VirtualFolder(name);
 			this.addFolder(newFolder, false);
 		}
@@ -225,6 +235,9 @@ export class VirtualFolder<E extends VirtualBaseEvents = VirtualBaseEvents> exte
 
 		let newFolder = this.findSubFolder(name);
 		if (newFolder == null) {
+			if (!isValidName(name))
+				return this;
+
 			newFolder = new VirtualFolderLink(name);
 			this.subFolders.push(newFolder);
 			newFolder.parent = this;
