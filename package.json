@@ -12,6 +12,7 @@
 	"license": "MIT",
 	"scripts": {
 		"preinstall": "npx only-allow pnpm",
+		"make": "powershell -NoProfile -ExecutionPolicy Bypass -File ./make.ps1",
 		"start": "pnpm run demo:start",
 		"tauri": "tauri",
 		"tauri:dev": "tauri dev",

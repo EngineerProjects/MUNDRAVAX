@@ -8,6 +8,7 @@
 	width: 100%;
 	height: var(--taskbar-height);
 	margin-bottom: env(safe-area-inset-bottom);
+	transition: transform 160ms ease-out;
 }
 
 .Taskbar::after,
@@ -64,4 +65,8 @@
 	height: 100%;
 	max-width: calc(100% - 12rem);
 	transform: translateX(-50%);
+}
+
+:global(html.HasActiveMaximizedWindow) .Taskbar:global(.ProzillaOS-Taskbar--AutoHideMaximized):not(:hover, :focus-within) {
+	transform: translateY(calc(100% - 3px));
 }

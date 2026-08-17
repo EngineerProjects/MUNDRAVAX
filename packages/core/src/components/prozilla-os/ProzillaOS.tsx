@@ -1,4 +1,4 @@
-import { memo, ReactElement, ReactNode } from "react";
+import { memo, ReactElement, ReactNode, useEffect } from "react";
 import { VirtualRootProvider } from "../../hooks/virtual-drive/virtualRootProvider";
 import { ZIndexManagerProvider } from "../../hooks/z-index/zIndexManagerProvider";
 import { WindowsManagerProvider } from "../../hooks/windows/windowsManagerProvider";
@@ -18,6 +18,8 @@ import { TrackingManagerProvider } from "../../hooks/tracking/trackingManagerPro
 import { VirtualDriveConfig, VirtualDriveConfigOptions } from "../../features/system/configs/virtualDriveConfig";
 import { Main } from "./Main";
 import { Skin } from "@prozilla-os/skins";
+import { Settings } from "../../features";
+import { useIntSetting, useStringSetting } from "../../hooks";
 
 export interface ProzillaOSProps {
 	/** The name of the system. */
@@ -66,6 +68,7 @@ export const ProzillaOS = memo(function(props: ProzillaOSProps): ReactElement {
 					<WindowsManagerProvider>
 						<ModalsManagerProvider>
 							<SettingsManagerProvider>
+								<AppearanceSettingsSync/>
 								<ThemeProvider>
 									<Main>
 										{children}
@@ -79,3 +82,15 @@ export const ProzillaOS = memo(function(props: ProzillaOSProps): ReactElement {
 		</VirtualRootProvider>
 	</SystemManagerProvider>;
 });
+
+function AppearanceSettingsSync() {
+	const [fontFamily] = useStringSetting(Settings.THEME, "font-family", "Outfit, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif");
+	const [uiDensity] = useIntSetting(Settings.THEME, "ui-density", 0);
+
+	useEffect(() => {
+		document.documentElement.style.setProperty("--body-font-family", fontFamily ?? "Outfit, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif");
+		document.documentElement.dataset.uiDensity = String(uiDensity);
+	}, [fontFamily, uiDensity]);
+
+	return null;
+}

@@ -1,14 +1,14 @@
 import { memo, MouseEvent, ReactNode, useCallback, useMemo, useRef, useState, type FC } from "react";
 import styles from "./Taskbar.module.css";
 import { attachSlots, InferSlots, type PropsWithSlots } from "../_utils/slots/slots";
-import { useClassNames, useSystemManager } from "../../hooks";
+import { useBoolSetting, useClassNames, useSystemManager } from "../../hooks";
 import { useContextMenu } from "../../hooks/modals/contextMenu";
 import { Actions } from "../actions/Actions";
 import { ClickAction } from "../actions/actions/ClickAction";
 import { useWindowsManager } from "../../hooks/windows/windowsManagerContext";
 import { useZIndex } from "../../hooks/z-index/zIndex";
 import { ZIndexManager } from "../../features/z-index/zIndexManager";
-import { AppsConfig } from "../../features";
+import { AppsConfig, Settings } from "../../features";
 import { TaskbarSlotsProvider } from "./taskbarSlots";
 import { TaskbarHome } from "./home/TaskbarHome";
 import { TaskbarSearch } from "./search/TaskbarSearch";
@@ -34,6 +34,7 @@ function TaskbarRoot({ children, ...slots }: TaskbarProps): ReactNode {
 	const { taskbarConfig, appsConfig } = useSystemManager();
 	const [activeMenu, setActiveMenu] = useState<TaskbarContext["activeMenu"]>(null);
 	const [searchQuery, setSearchQuery] = useState("");
+	const [autoHideMaximized] = useBoolSetting(Settings.TASKBAR, "auto-hide-maximized", false);
 	const searchInputRef = useRef<HTMLInputElement>(null);
 	const windowsManager = useWindowsManager();
 	const zIndex = useZIndex({ groupIndex: ZIndexManager.GROUPS.TASKBAR, index: 0 });
@@ -83,6 +84,8 @@ function TaskbarRoot({ children, ...slots }: TaskbarProps): ReactNode {
 	const modifiers: string[] = [];
 	if (activeMenu === "home")
 		modifiers.push("HomeActive");
+	if (autoHideMaximized)
+		modifiers.push("AutoHideMaximized");
 
 	return <div
 		style={{ "--taskbar-height": `${taskbarConfig.height}px`, zIndex }}

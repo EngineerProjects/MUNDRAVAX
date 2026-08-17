@@ -192,8 +192,6 @@ export const Desktop = memo(() => {
 					event.preventDefault();
 
 					const options: Record<string, unknown> = {};
-					if (file.name === "Info.md")
-						options.size = new Vector2(575, 675);
 					if (file.extension === "md")
 						options.mode = "view";
 

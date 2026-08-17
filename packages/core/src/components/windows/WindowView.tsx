@@ -49,6 +49,8 @@ export interface WindowProps extends WindowOptions {
 	toggleMinimized?: (event?: Event) => void;
 	/** The depth value of the window. */
 	index?: number;
+	/** Function that reports whether this window is currently maximized. */
+	onMaximizedChange?: (windowId: string, maximized: boolean) => void;
 	/** Whether the window is in standalone mode. */
 	standalone?: boolean;
 }
@@ -56,7 +58,7 @@ export interface WindowProps extends WindowOptions {
 /**
  * Component that renders the window for an application.
  */
-export const WindowView: FC<WindowProps> = memo(({ id, app, size, position, options, active, fullscreen, minimized, toggleMinimized, index }) => {
+export const WindowView: FC<WindowProps> = memo(({ id, app, size, position, options, active, fullscreen, minimized, toggleMinimized, index, onMaximizedChange }) => {
 	const { systemName, windowsConfig, appsConfig } = useSystemManager();
 	const windowsManager = useWindowsManager();
 	const nodeRef = useRef(null);
@@ -124,6 +126,13 @@ export const WindowView: FC<WindowProps> = memo(({ id, app, size, position, opti
 			window.removeEventListener("focus", setViewportTitleAndIcon);
 		};
 	}, [active, minimized, iconUrl, title]);
+
+	useEffect(() => {
+		if (id != null) {
+			onMaximizedChange?.(id, maximized);
+			windowsManager?.setFullscreen(id, maximized);
+		}
+	}, [id, maximized, onMaximizedChange, windowsManager]);
 
 	if (app == null)
 		return;

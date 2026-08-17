@@ -64,7 +64,8 @@
 	flex: 1;
 	display: flex;
 	flex-direction: column;
-	align-content: flex-start;
+	align-items: center;
+	align-content: center;
 	height: 100%;
 	padding: 0.5rem 1rem;
 	background-color: var(--background-color-3);
@@ -346,4 +347,140 @@ span.Breadcrumbs {
 
 .OptionList .OptionListItem:has(.Checkbox:not(.Checked)) {
 	background-color: var(--background-color-2);
+}
+
+.SettingsPage,
+.AppearancePage {
+	display: flex;
+	flex-direction: column;
+	gap: 0.85rem;
+	width: min(100%, 62rem);
+	padding-bottom: 2rem;
+	margin: 0 auto;
+}
+
+.PageTitle {
+	margin: 1rem 0 0.5rem;
+	font-size: 1.35rem;
+	line-height: 1.2;
+}
+
+.SettingsSection {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	background-color: color-mix(in srgb, var(--background-color-2) 56%, var(--background-color-1));
+	border: 1px solid color-mix(in srgb, var(--foreground-color-2) 20%, transparent);
+	border-radius: var(--border-radius-1);
+}
+
+.SettingsSectionHeader h2,
+.SettingsSectionHeader p {
+	margin: 0;
+}
+
+.SettingsSectionHeader {
+	padding: 0.95rem 1rem 0.7rem;
+	border-bottom: 1px solid color-mix(in srgb, var(--foreground-color-2) 16%, transparent);
+	text-align: center;
+}
+
+.SettingsSectionHeader h2 {
+	font-size: 0.95rem;
+}
+
+.SettingsSectionHeader p,
+.SettingRow small {
+	color: var(--foreground-color-1);
+}
+
+.SettingsSectionHeader p {
+	margin-top: 0.25rem;
+	font-size: 0.82rem;
+	line-height: 1.35;
+}
+
+.SettingsSectionBody {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	padding: 0.25rem 0;
+}
+
+.SettingRow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	min-height: 3.4rem;
+	padding: 0.7rem 1rem;
+	background-color: transparent;
+	border-bottom: 1px solid color-mix(in srgb, var(--foreground-color-2) 12%, transparent);
+	text-align: left;
+}
+
+button.SettingRow {
+	width: 100%;
+	color: inherit;
+	border: none;
+	outline: none;
+	cursor: pointer;
+}
+
+.SettingRow:last-child {
+	border-bottom: none;
+}
+
+.SettingRow:hover,
+.SettingRow:focus-within {
+	background-color: color-mix(in srgb, var(--background-color-0) 44%, transparent);
+}
+
+.SettingRow > span {
+	display: flex;
+	flex-direction: column;
+	gap: 0.2rem;
+	min-width: 0;
+}
+
+.SettingRow > .Dropdown,
+.SettingRow > .Checkbox,
+.SettingRow > .Button,
+.SettingRow > .IconButton {
+	flex: 0 0 auto;
+}
+
+.SettingRow strong {
+	color: var(--foreground-color-0);
+	font-size: 0.9rem;
+}
+
+.CompactWallpaper {
+	display: flex;
+	flex-direction: column;
+	gap: 0.65rem;
+	padding: 0.9rem 1rem 1rem;
+	border-top: 1px solid color-mix(in srgb, var(--foreground-color-2) 12%, transparent);
+}
+
+.CompactWallpaper .ImageSelectContainer {
+	grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+}
+
+.StoragePanel {
+	display: flex;
+	flex-direction: column;
+	gap: 0.55rem;
+	padding: 1rem;
+}
+
+@media (max-width: 700px) {
+	.SettingRow {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+
+	.SettingRow .Dropdown {
+		max-width: 100%;
+	}
 }

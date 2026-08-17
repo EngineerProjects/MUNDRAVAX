@@ -17,17 +17,21 @@ export function loadDefaultData(systemManager: SystemManager, virtualRoot: Virtu
 			userFolder.setAlias("~")
 				.createFolder(".config", (configFolder) => {
 					configFolder.setIconUrl(skin.folderIcons.config ?? skin.folderIcons.generic)
+						.setDeletionProtected(true)
 						.createFile("desktop", "xml", (file) => {
 							file.setContent([
 								"<options>",
 								`	<wallpaper>${skin.defaultWallpaper}</wallpaper>`,
 								"	<show-icons>true</show-icons>",
+								"	<icon-size>1</icon-size>",
+								"	<icon-direction>0</icon-direction>",
 								"</options>",
 							]);
 						}).createFile("taskbar", "xml", (file) => {
 							file.setContent([
 								"<options>",
 								`	<pins>${appsConfig.apps.filter((app) => app.pinnedByDefault).map(({ id }) => id).join(",")}</pins>`,
+								"	<auto-hide-maximized>false</auto-hide-maximized>",
 								"</options>",
 							]);
 						}).createFile("apps", "xml", (file) => {
@@ -40,68 +44,49 @@ export function loadDefaultData(systemManager: SystemManager, virtualRoot: Virtu
 							file.setContent([
 								"<options>",
 								`	<theme>${skin.defaultTheme ?? Theme.Dark}</theme>`,
+								"	<font-family>Outfit, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif</font-family>",
+								"	<ui-density>0</ui-density>",
 								"</options>",
 							]);
+						}).createFolder("Wallpapers", (wallpapersFolder) => {
+							wallpapersFolder.setProtected(true);
+							for (let i = 0; i < skin.wallpapers.length; i++) {
+								const source = skin.wallpapers[i];
+								wallpapersFolder.createFile(`Wallpaper${i + 1}`, "png", (file) => {
+									file.setSource(source);
+								});
+							}
 						});
 				});
 
 			if (virtualDriveConfig.defaultData.includePicturesFolder) {
 				userFolder.createFolder("Pictures", (picturesFolder) => {
-					picturesFolder.setIconUrl(skin.folderIcons.images ?? skin.folderIcons.generic);
-					picturesFolder.createFolder("Wallpapers", (wallpapersFolder) => {
-						wallpapersFolder.setProtected(true);
-						for (let i = 0; i < skin.wallpapers.length; i++) {
-							const source = skin.wallpapers[i];
-							wallpapersFolder.createFile(`Wallpaper${i + 1}`, "png", (file) => {
-								file.setSource(source);
-							});
-						}
-					}).createFile("ProzillaOS", "png", (file) => {
-						file.setSource("/assets/banner-logo-title.png");
-					}).createFile("Icon", "svg", (file) => {
-						file.setSource("/icon.svg");
-					}).createFolder("Crumbling City", (crumblingCityFolder) => {
-						crumblingCityFolder.createFile("Japan", "png", (file) => {
-							file.setSource("https://daisygames.org/media/Games/Crumbling%20City/CrumblingCityRelease.png");
-						}).createFile("City Center", "png", (file) => {
-							file.setSource("https://daisygames.org/media/Games/Crumbling%20City/Screenshot_City_Firegun.png");
-						}).createFile("Farms", "png", (file) => {
-							file.setSource("https://daisygames.org/media/Games/Crumbling%20City/Screenshot_Farms_Hammer.png");
-						});
-					});
+					picturesFolder.setIconUrl(skin.folderIcons.images ?? skin.folderIcons.generic)
+						.setDeletionProtected(true);
 					linkedPaths.images = picturesFolder.path;
 				});
 			}
 
 			if (virtualDriveConfig.defaultData.includeDocumentsFolder) {
 				userFolder.createFolder("Documents", (documentsFolder) => {
-					documentsFolder.setIconUrl(skin.folderIcons.text ?? skin.folderIcons.generic);
-					documentsFolder.createFile("text", "txt", (file) => {
-						file.setContent("Hello world!");
-					}).createFile("Info", "md", (file) => {
-						file.setProtected(true)
-							.setSource("/documents/info.md")
-							.setIconUrl(skin.fileIcons.info ?? skin.fileIcons.generic);
-						linkedPaths.info = file.path;
-					}).createFile("Prozilla", "md", (file) => {
-						file.setProtected(true)
-							.setSource("/documents/prozilla.md");
-						linkedPaths.links = file.path;
-					});
+					documentsFolder.setIconUrl(skin.folderIcons.text ?? skin.folderIcons.generic)
+						.setDeletionProtected(true);
 					linkedPaths.documents = documentsFolder.path;
 				});
 			}
 
 			if (virtualDriveConfig.defaultData.includeDownloadsFolder) {
 				userFolder.createFolder("Downloads", (downloadsFolder) => {
-					downloadsFolder.setIconUrl(skin.folderIcons.downloads ?? skin.folderIcons.generic);
+					downloadsFolder.setIconUrl(skin.folderIcons.downloads ?? skin.folderIcons.generic)
+						.setDeletionProtected(true);
 					linkedPaths.downloads = downloadsFolder.path;
 				});
 			}
 
 			if (virtualDriveConfig.defaultData.includeDesktopFolder) {
 				userFolder.createFolder("Desktop", (desktopFolder) => {
-					desktopFolder.setIconUrl(skin.folderIcons.desktop ?? skin.folderIcons.generic);
+					desktopFolder.setIconUrl(skin.folderIcons.desktop ?? skin.folderIcons.generic)
+						.setDeletionProtected(true);
 					// Intentionally no shortcuts to Pictures/Documents/Info.md/Prozilla.md/Documentation:
 					// those stay reachable through Files instead of duplicating them on the desktop.
 
@@ -120,26 +105,20 @@ export function loadDefaultData(systemManager: SystemManager, virtualRoot: Virtu
 			if (virtualDriveConfig.defaultData.includeVideoFolder) {
 				userFolder.createFolder("Videos", (videosFolder) => {
 					videosFolder.setIconUrl(skin.folderIcons.video ?? skin.folderIcons.generic)
-						.createFile("Weezer_Buddy-Holly", "yt", (file) => {
-							file.setSource("https://www.youtube.com/watch?v=kemivUKb4f4");
-						});
+						.setDeletionProtected(true);
 				});
 			}
 			
 			if (virtualDriveConfig.defaultData.includeAudioFolder) {
 				userFolder.createFolder("Audio", (audioFolder) => {
 					audioFolder.setIconUrl(skin.folderIcons.audio ?? skin.folderIcons.generic)
-						.createFile("Andrew-Applepie_Im-So", "ogg", (file) => {
-							file.setSource("/assets/audio/Andrew-Applepie_Im-So.ogg");
-						})
-						.createFile("Andrew-Applepie_Run-Part-2", "ogg", (file) => {
-							file.setSource("/assets/audio/Andrew-Applepie_Run-Part-2.ogg");
-						});
+						.setDeletionProtected(true);
 				});
 			}
 			
 			if (virtualDriveConfig.defaultData.includeAppsFolder) {
 				userFolder.createFolder("Apps", (appsFolder) => {
+					appsFolder.setDeletionProtected(true);
 					appsConfig.apps.forEach((app) => {
 						appsFolder.createFile(app.name, undefined, (file) => {
 							file.setSource(FILE_SCHEMES.app + app.id)
@@ -151,11 +130,8 @@ export function loadDefaultData(systemManager: SystemManager, virtualRoot: Virtu
 
 			if (virtualDriveConfig.defaultData.includeScriptsFolder) {
 				userFolder.createFolder("Scripts", (scriptsFolder) => {
-					scriptsFolder.createFile("fizzbuzz", "sh", (file) => {
-						file.setSource("/scripts/fizzbuzz.sh");
-					}).createFile("helloworld", "sh", (file) => {
-						file.setSource("/scripts/helloworld.sh");
-					});
+					scriptsFolder.setIconUrl(skin.folderIcons.generic)
+						.setDeletionProtected(true);
 				});
 			}
 		});

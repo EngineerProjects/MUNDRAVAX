@@ -3,14 +3,14 @@ import styles from "../../Settings.module.css";
 import { FileSelectorMode, fileExplorer } from "@prozilla-os/file-explorer";
 import { WALLPAPERS_PATH } from "../../../constants/settings.const";
 
-export function WallpaperSettings() {
+export function WallpaperSettings({ compact = false }: { compact?: boolean }) {
 	const { modalsConfig } = useSystemManager();
 	const virtualRoot = useVirtualRoot();
 	const [wallpaper, setWallpaper] = useStringSetting(SettingsManager.VIRTUAL_PATHS.desktop, "wallpaper");
 	const { openWindowedModal } = useWindowedModal();
 
-	return <div className={styles.Option}>
-		<p className={styles.Label}>Wallpaper</p>
+	return <div className={compact ? styles.CompactWallpaper : styles.Option}>
+		{!compact && <p className={styles.Label}>Wallpaper</p>}
 		<Button
 			className={`${styles.Button} ${utilStyles.TextBold}`}
 			onClick={() => {

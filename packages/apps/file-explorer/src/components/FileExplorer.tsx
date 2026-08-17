@@ -260,7 +260,7 @@ export function FileExplorer({ app, path: startPath, selectorMode, Footer, onSel
 					<QuickAccessButton name={"Home"} onClick={() => { changeDirectory("~"); }} icon={faHouse}/>
 					<QuickAccessButton name={"Desktop"} onClick={() => { changeDirectory("~/Desktop"); }} icon={faDesktop}/>
 					<QuickAccessButton name={"Downloads"} onClick={() => { changeDirectory("~/Downloads"); }} icon={faDownload}/>
-					<QuickAccessButton name={"Images"} onClick={() => { changeDirectory("~/Pictures"); }} icon={faImage}/>
+					<QuickAccessButton name={"Pictures"} onClick={() => { changeDirectory("~/Pictures"); }} icon={faImage}/>
 					<QuickAccessButton name={"Documents"} onClick={() => { changeDirectory("~/Documents"); }} icon={faFileLines}/>
 				</div>
 				<DirectoryList

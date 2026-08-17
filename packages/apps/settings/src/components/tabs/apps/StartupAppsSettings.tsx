@@ -1,12 +1,11 @@
 import styles from "../../Settings.module.css";
-import { ImagePreview, Settings, useInstalledApps, useListSetting, useSystemManager, utilStyles } from "@prozilla-os/core";
+import { ImagePreview, Settings, useInstalledApps, useListSetting } from "@prozilla-os/core";
 import { removeFromArray } from "@prozilla-os/shared";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSquare } from "@fortawesome/free-regular-svg-icons";
 import { faSquareCheck } from "@fortawesome/free-solid-svg-icons";
 
 export function StartupAppsSettings() {
-	const systemManager = useSystemManager();
 	const apps = useInstalledApps();
 	const [startup, setStartup] = useListSetting(Settings.APPS, "startup");
 	
@@ -27,14 +26,13 @@ export function StartupAppsSettings() {
 		setStartup(newStartup);
 	};
 
-	return <div className={`${styles.Option} ${styles.OptionList}`}>
-		<p className={utilStyles.TextLight}>Apps can be configured to start automatically when you enter {systemManager.systemName}.</p>
+	return <div className={styles.SettingsSectionBody}>
 		{apps.map((app) => {
 			const active = startup.includes(app.id);
 
 			return <button
 				key={app.id}
-				className={`${styles.Option} ${styles.OptionHorizontal} ${styles.OptionListItem}`}
+				className={styles.SettingRow}
 				onClick={(_event) => setActive(app.id, !active)}
 			>
 				<span className={styles.Label}>

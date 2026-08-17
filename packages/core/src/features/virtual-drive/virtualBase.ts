@@ -21,6 +21,8 @@ export class VirtualBase<E extends VirtualBaseEvents = VirtualBaseEvents> extend
 	parent: VirtualFolder | undefined | null;
 	/** Whether this item is protected from changes. */
 	isProtected: boolean | undefined | null;
+	/** Whether this item is protected from deletion. */
+	isDeletionProtected: boolean | undefined | null;
 	/** The URL of the icon of this item. */
 	iconUrl: string | undefined | null;
 	/** The file this item links to. */
@@ -87,6 +89,11 @@ export class VirtualBase<E extends VirtualBaseEvents = VirtualBaseEvents> extend
 		return this;
 	}
 
+	setDeletionProtected(value: boolean): this {
+		this.isDeletionProtected = value;
+		return this;
+	}
+
 	setIconUrl(iconUrl: string | null): this {
 		if (this.iconUrl === iconUrl || !this.canBeEdited)
 			return this;
@@ -124,7 +131,7 @@ export class VirtualBase<E extends VirtualBaseEvents = VirtualBaseEvents> extend
 	 * Tries to delete this item.
 	 */
 	delete() {
-		if (!this.canBeEdited)
+		if (!this.canBeDeleted)
 			return;
 
 		const parent = this.parent;
@@ -200,6 +207,19 @@ export class VirtualBase<E extends VirtualBaseEvents = VirtualBaseEvents> extend
 		} else {
 			return !isProtected;
 		}
+	}
+
+	get canBeDeleted(): boolean {
+		if (this.isDeleted)
+			return false;
+
+		const isProtected = this.isProtected && this.getRoot().loadedDefaultData;
+		const isDeletionProtected = this.isDeletionProtected && this.getRoot().loadedDefaultData;
+
+		if (isProtected || isDeletionProtected)
+			return false;
+
+		return this.parent?.canBeEdited ?? true;
 	}
 
 	/**

@@ -1,4 +1,4 @@
-import { FC, memo, useEffect, useState } from "react";
+import { FC, memo, useCallback, useEffect, useMemo, useState } from "react";
 import { WindowProps, WindowView } from "./WindowView";
 import { setViewportTitle, setViewportIcon, getViewportParams, Settings } from "../../features";
 import { WindowOptions } from "../../features/windows/windowsManager";
@@ -15,6 +15,7 @@ export const WindowsView: FC = memo(() => {
 	const windows = useWindows();
 	const windowsManager = useWindowsManager();
 	const [sortedWindows, setSortedWindows] = useState<WindowProps[]>([]);
+	const [maximizedWindows, setMaximizedWindows] = useState<Record<string, boolean>>({});
 
 	// Sort windows
 	useEffect(() => {
@@ -22,6 +23,13 @@ export const WindowsView: FC = memo(() => {
 			setSortedWindows([...windows].sort((windowA: WindowOptions, windowB: WindowOptions) =>
 				(windowA.lastInteraction ?? 0) - (windowB.lastInteraction ?? 0)
 			));
+	}, [windows]);
+
+	useEffect(() => {
+		const windowIds = new Set((windows ?? []).map((window) => window.id).filter((id): id is string => id != null));
+		setMaximizedWindows((maximizedWindows) => Object.fromEntries(
+			Object.entries(maximizedWindows).filter(([windowId]) => windowIds.has(windowId))
+		));
 	}, [windows]);
 
 	useEffect(() => {
@@ -39,6 +47,31 @@ export const WindowsView: FC = memo(() => {
 			window.removeEventListener("blur", resetViewportTitleAndIcon);
 		};
 	}, [sortedWindows]);
+
+	const activeWindow = sortedWindows[sortedWindows.length - 1];
+	const hasActiveMaximizedWindow = useMemo(() => {
+		if (sortedWindows.length === 0 || activeWindow.id == null || activeWindow.minimized)
+			return false;
+
+		return Boolean(activeWindow.fullscreen || maximizedWindows[activeWindow.id]);
+	}, [activeWindow, maximizedWindows, sortedWindows.length]);
+
+	useEffect(() => {
+		document.documentElement.classList.toggle("HasActiveMaximizedWindow", hasActiveMaximizedWindow);
+
+		return () => {
+			document.documentElement.classList.remove("HasActiveMaximizedWindow");
+		};
+	}, [hasActiveMaximizedWindow]);
+
+	const onMaximizedChange = useCallback((windowId: string, maximized: boolean) => {
+		setMaximizedWindows((windows) => {
+			if (windows[windowId] === maximized)
+				return windows;
+
+			return { ...windows, [windowId]: maximized };
+		});
+	}, []);
 
 	// Launch startup apps
 	useEffect(() => {
@@ -85,6 +118,7 @@ export const WindowsView: FC = memo(() => {
 					event?.stopPropagation();
 					windowsManager?.setMinimized(id as string, !minimized);
 				}}
+				onMaximizedChange={onMaximizedChange}
 				fullscreen={fullscreen}
 			/>;
 		})}

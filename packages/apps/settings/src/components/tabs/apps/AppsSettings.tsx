@@ -9,16 +9,16 @@ export function AppsSettings() {
 		pages={{
 			installedApps: {
 				title: "Installed apps",
-				description: "Manage installed apps",
+				description: "Launch, pin, or manage installed applications.",
 				icon: faList,
 				Content: InstalledAppsSettings,
 			},
 			startupApps: {
 				title: "Startup apps",
-				description: "Apps that start automatically",
+				description: "Choose what opens automatically when Mundravax starts.",
 				icon: faFlagCheckered,
 				Content: StartupAppsSettings,
 			},
 		}}
-	></SettingsNavPage>;
+	/>;
 }

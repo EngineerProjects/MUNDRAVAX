@@ -353,7 +353,7 @@ export class VirtualFolder<E extends VirtualBaseEvents = VirtualBaseEvents> exte
 	 * Deletes this folder and all its files and sub-folders recursively.
 	 */
 	delete() {
-		if (!this.canBeEdited)
+		if (!this.canBeDeleted)
 			return;
 
 		super.delete();

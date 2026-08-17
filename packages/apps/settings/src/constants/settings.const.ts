@@ -5,4 +5,4 @@ export const TABS = {
 	ABOUT: 3,
 };
 
-export const WALLPAPERS_PATH = "~/Pictures/Wallpapers";
+export const WALLPAPERS_PATH = "~/.config/Wallpapers";

@@ -31,6 +31,10 @@
 	resize: none;
 }
 
+:global(html.HasActiveMaximizedWindow) .Window-container.Maximized .Window-inner {
+	height: 100%;
+}
+
 .Window-inner {
 	display: flex;
 	flex-direction: column;

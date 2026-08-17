@@ -37,7 +37,7 @@ export function AppOption({ app, pins, setPins }: AppOptionProps) {
 		</Actions>,
 	});
 
-	return <div className={`${styles.Option} ${styles.OptionHorizontal} ${styles.OptionListItem}`}>
+	return <div className={styles.SettingRow}>
 		<span className={styles.Label}>
 			<ImagePreview className={styles.Icon} source={app.iconUrl as string}/>
 			{app.name}

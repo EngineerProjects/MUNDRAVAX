@@ -6,7 +6,7 @@ export function InstalledAppsSettings() {
 	const [pins, setPins] = useListSetting(Settings.TASKBAR, "pins");
 	const apps = useInstalledApps();
 
-	return <div className={`${styles.Option} ${styles.OptionList}`}>
+	return <div className={styles.SettingsSectionBody}>
 		{apps.map((app) => 
 			<AppOption key={app.id} app={app} pins={pins} setPins={setPins}/>
 		)}

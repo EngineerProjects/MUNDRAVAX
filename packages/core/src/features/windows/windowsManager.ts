@@ -245,6 +245,26 @@ export class WindowsManager {
 	}
 
 	/**
+	 * Change the fullscreen/maximized state of a window.
+	 * @param windowId - The ID of the window.
+	 * @param fullscreen - Whether the window is fullscreen/maximized.
+	 */
+	setFullscreen(windowId: string, fullscreen: boolean) {
+		windowId = windowId.toString();
+
+		if (!this.windowIds.includes(windowId)) {
+			console.warn(`Failed to set fullscreen on window ${windowId}: window not found`);
+			return;
+		}
+
+		if (this.windows[windowId].fullscreen === fullscreen)
+			return;
+
+		this.windows[windowId].fullscreen = fullscreen;
+		this.updateWindows(this.windows);
+	}
+
+	/**
 	 * Minimize all windows.
 	 */
 	minimizeAll() {
