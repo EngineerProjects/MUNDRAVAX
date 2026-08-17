@@ -42,8 +42,10 @@ export class TauriStorage extends Storage {
 	override async clear(): Promise<this> {
 		this.#value = null;
 
-		if (this.#flushTimeout != null)
+		if (this.#flushTimeout != null) {
 			clearTimeout(this.#flushTimeout);
+			this.#flushTimeout = undefined;
+		}
 
 		// Wait for the current chain (e.g. a pending save) before clearing,
 		// so a reset can't be silently overwritten by an in-flight save.
@@ -52,11 +54,29 @@ export class TauriStorage extends Storage {
 		return this;
 	}
 
+	/**
+	 * Immediately performs any debounced write instead of waiting out the
+	 * delay, then waits for it (and anything already in flight) to finish.
+	 * Used to guarantee the latest edit is saved before the app closes.
+	 */
+	async flush(): Promise<void> {
+		if (this.#flushTimeout != null) {
+			clearTimeout(this.#flushTimeout);
+			this.#flushTimeout = undefined;
+
+			const pending = this.#value;
+			this.#writeChain = this.#writeChain.then(() => invoke("save_drive", { data: pending }));
+		}
+
+		await this.#writeChain;
+	}
+
 	#scheduleFlush() {
 		if (this.#flushTimeout != null)
 			clearTimeout(this.#flushTimeout);
 
 		this.#flushTimeout = setTimeout(() => {
+			this.#flushTimeout = undefined;
 			const pending = this.#value;
 			this.#writeChain = this.#writeChain.then(() => invoke("save_drive", { data: pending }));
 		}, TauriStorage.FLUSH_DELAY_MS);

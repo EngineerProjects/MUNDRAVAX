@@ -2,6 +2,7 @@ import { memo, ReactElement, ReactNode, useEffect, useState } from "react";
 import { VirtualRootProvider } from "../../hooks/virtual-drive/virtualRootProvider";
 import { isTauri } from "../../features/_utils";
 import { tauriStorage } from "../../features/storage/tauriStorage";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { ZIndexManagerProvider } from "../../hooks/z-index/zIndexManagerProvider";
 import { WindowsManagerProvider } from "../../hooks/windows/windowsManagerProvider";
 import { ModalsManagerProvider } from "../../hooks/modals/modalsManagerProvider";
@@ -60,12 +61,52 @@ export const ProzillaOS = memo(function(props: ProzillaOSProps): ReactElement {
 			return;
 
 		let cancelled = false;
-		void tauriStorage.preload().then(() => {
-			if (!cancelled)
-				setDriveReady(true);
-		});
+		// A rejection here (corrupted file, lost/mismatched keychain entry)
+		// must still let the app boot - otherwise driveReady never becomes
+		// true and the whole app is stuck blank forever. Falls back to a
+		// fresh virtual drive, matching how a corrupted localStorage blob
+		// already falls back to defaults on the plain-web path.
+		void tauriStorage.preload()
+			.catch((error: unknown) => {
+				console.error("Failed to load the virtual drive - starting with a fresh one.", error);
+				window.alert("Your saved data could not be loaded (it may be corrupted, or its security key is missing). Starting with a fresh virtual drive.");
+			})
+			.then(() => {
+				if (!cancelled)
+					setDriveReady(true);
+			});
 
 		return () => { cancelled = true; };
+	}, []);
+
+	// Guarantees the latest edit is on disk before the app actually closes,
+	// instead of possibly losing whatever was still inside the debounced
+	// write's ~300ms window.
+	useEffect(() => {
+		if (!isTauri())
+			return;
+
+		let unlisten: (() => void) | undefined;
+		let cancelled = false;
+
+		void getCurrentWindow().onCloseRequested(async (event) => {
+			event.preventDefault();
+			await tauriStorage.flush();
+			await getCurrentWindow().close();
+		}).then((fn) => {
+			if (cancelled) {
+				fn();
+			} else {
+				unlisten = fn;
+			}
+		}).catch((error: unknown) => {
+			console.error("Failed to register the close-flush handler.", error);
+		});
+
+		return () => {
+			cancelled = true;
+			unlisten?.();
+		};
 	}, []);
 
 	const systemParams = {
