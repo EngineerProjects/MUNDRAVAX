@@ -583,6 +583,9 @@ importers:
       '@prozilla-os/skins':
         specifier: workspace:*
         version: link:../../skins
+      markdown-to-jsx:
+        specifier: ^7.7.17
+        version: 7.7.17(react@18.3.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1

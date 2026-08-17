@@ -16,32 +16,33 @@ export function loadDefaultData(systemManager: SystemManager, virtualRoot: Virtu
 		homeFolder.createFolder("prozilla-os", (userFolder) => {
 			userFolder.setAlias("~")
 				.createFolder(".config", (configFolder) => {
-					configFolder.createFile("desktop", "xml", (file) => {
-						file.setContent([
-							"<options>",
-							`	<wallpaper>${skin.defaultWallpaper}</wallpaper>`,
-							"	<show-icons>true</show-icons>",
-							"</options>",
-						]);
-					}).createFile("taskbar", "xml", (file) => {
-						file.setContent([
-							"<options>",
-							`	<pins>${appsConfig.apps.filter((app) => app.pinnedByDefault).map(({ id }) => id).join(",")}</pins>`,
-							"</options>",
-						]);
-					}).createFile("apps", "xml", (file) => {
-						file.setContent([
-							"<options>",
-							`	<startup>${appsConfig.apps.filter((app) => app.launchAtStartup).map(({ id }) => id).join(",")}</startup>`,
-							"</options>",
-						]);
-					}).createFile("theme", "xml", (file) => {
-						file.setContent([
-							"<options>",
-							`	<theme>${skin.defaultTheme ?? Theme.Dark}</theme>`,
-							"</options>",
-						]);
-					});
+					configFolder.setIconUrl(skin.folderIcons.config ?? skin.folderIcons.generic)
+						.createFile("desktop", "xml", (file) => {
+							file.setContent([
+								"<options>",
+								`	<wallpaper>${skin.defaultWallpaper}</wallpaper>`,
+								"	<show-icons>true</show-icons>",
+								"</options>",
+							]);
+						}).createFile("taskbar", "xml", (file) => {
+							file.setContent([
+								"<options>",
+								`	<pins>${appsConfig.apps.filter((app) => app.pinnedByDefault).map(({ id }) => id).join(",")}</pins>`,
+								"</options>",
+							]);
+						}).createFile("apps", "xml", (file) => {
+							file.setContent([
+								"<options>",
+								`	<startup>${appsConfig.apps.filter((app) => app.launchAtStartup).map(({ id }) => id).join(",")}</startup>`,
+								"</options>",
+							]);
+						}).createFile("theme", "xml", (file) => {
+							file.setContent([
+								"<options>",
+								`	<theme>${skin.defaultTheme ?? Theme.Dark}</theme>`,
+								"</options>",
+							]);
+						});
 				});
 
 			if (virtualDriveConfig.defaultData.includePicturesFolder) {
@@ -91,8 +92,16 @@ export function loadDefaultData(systemManager: SystemManager, virtualRoot: Virtu
 				});
 			}
 
+			if (virtualDriveConfig.defaultData.includeDownloadsFolder) {
+				userFolder.createFolder("Downloads", (downloadsFolder) => {
+					downloadsFolder.setIconUrl(skin.folderIcons.downloads ?? skin.folderIcons.generic);
+					linkedPaths.downloads = downloadsFolder.path;
+				});
+			}
+
 			if (virtualDriveConfig.defaultData.includeDesktopFolder) {
 				userFolder.createFolder("Desktop", (desktopFolder) => {
+					desktopFolder.setIconUrl(skin.folderIcons.desktop ?? skin.folderIcons.generic);
 					// Intentionally no shortcuts to Pictures/Documents/Info.md/Prozilla.md/Documentation:
 					// those stay reachable through Files instead of duplicating them on the desktop.
 

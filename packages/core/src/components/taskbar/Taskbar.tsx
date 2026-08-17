@@ -14,14 +14,16 @@ import { TaskbarHome } from "./home/TaskbarHome";
 import { TaskbarSearch } from "./search/TaskbarSearch";
 import { TaskbarApps } from "./apps/TaskbarApps";
 import { TaskbarIndicators } from "./indicators/TaskbarIndicators";
+import { TaskbarAssistant } from "./assistant/TaskbarAssistant";
 import type { TaskbarContext } from "./taskbarSlots";
 
 /**
  * Props for {@link Taskbar}.
  */
-export type TaskbarProps = PropsWithSlots<{ Home: FC; Search: FC; Apps: FC; Indicators: FC }>;
+export type TaskbarProps = PropsWithSlots<{ Assistant: FC; Home: FC; Search: FC; Apps: FC; Indicators: FC }>;
 
 const DEFAULT_SLOTS: InferSlots<TaskbarProps> = {
+	Assistant: TaskbarAssistant,
 	Home: TaskbarHome,
 	Search: TaskbarSearch,
 	Apps: TaskbarApps,
@@ -102,15 +104,16 @@ function TaskbarRoot({ children, ...slots }: TaskbarProps): ReactNode {
 	</div>;
 }
 
-function TaskbarLayout({ Home, Search, Apps, Indicators }: InferSlots<TaskbarProps>) {
+function TaskbarLayout({ Assistant, Home, Search, Apps, Indicators }: InferSlots<TaskbarProps>) {
 	return <>
-		{/* Reserved for a future assistant/widget entry point, kept empty for now */}
-		<div className={useClassNames([styles.AgentSlot], "Taskbar", "AgentSlot")}/>
-		<div className={useClassNames([styles.Menus], "Taskbar", "MenuIcons")}>
-			<Home/>
-			<Search/>
+		<Assistant/>
+		<div className={useClassNames([styles.CenterItems], "Taskbar", "CenterItems")}>
+			<div className={useClassNames([styles.Menus], "Taskbar", "MenuIcons")}>
+				<Home/>
+				<Search/>
+			</div>
+			<Apps/>
 		</div>
-		<Apps/>
 		<Indicators/>
 	</>;
 }
@@ -119,6 +122,8 @@ function TaskbarLayout({ Home, Search, Apps, Indicators }: InferSlots<TaskbarPro
  * Component that renders the home menu, search menu, pinned and active applications and various indicators.
  */
 export const Taskbar = attachSlots<typeof TaskbarRoot>(memo(TaskbarRoot), {
+	/** Component that renders the assistant entry in the taskbar. */
+	Assistant: TaskbarAssistant,
 	/** Component that renders the home menu in the taskbar. */
 	Home: TaskbarHome,
 	/** Component that renders the search menu in the taskbar. */

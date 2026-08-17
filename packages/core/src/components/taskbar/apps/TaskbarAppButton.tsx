@@ -1,9 +1,11 @@
 import { memo, MouseEvent } from "react";
 import { App } from "../../../features";
-import { useClassNames, useContextMenu, useWindowsManager } from "../../../hooks";
+import { useClassNames, useContextMenu, useSettingsManager, useWindowsManager } from "../../../hooks";
 import { Actions, ClickAction } from "../../actions";
 import styles from "./TaskbarAppButton.module.css";
 import { VectorImage } from "../../_utils/vector-image/VectorImage";
+import { faThumbTack, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { unpinAppFromTaskbar } from "./taskbarPins";
 
 export interface TaskbarAppButtonProps {
 	app: App;
@@ -13,26 +15,25 @@ export interface TaskbarAppButtonProps {
 
 export const TaskbarAppButton = memo(({ app, active, visible }: TaskbarAppButtonProps) => {
 	const windowsManager = useWindowsManager();
-	// const settingsManager = useSettingsManager();
+	const settingsManager = useSettingsManager();
 	const { onContextMenu } = useContextMenu({ Actions: (props) =>
 		<Actions avoidTaskbar={false} {...props}>
-			<ClickAction label={app.name} icon={app.iconUrl as string | undefined} onTrigger={() => {
-				windowsManager?.open(app.id);
-			}}/>
-			{/* <ClickAction label={isPinned ? "Unpin from taskbar" : "Pin to taskbar"} icon={faThumbTack} onTrigger={() => {
-				const newPins = [...pins];
-				if (isPinned) {
-					removeFromArray(app.id, pins);
+			<ClickAction label={active ? "Show" : "Open"} icon={app.iconUrl as string | undefined} onTrigger={() => {
+				const windowId = windowsManager?.getAppWindowId(app.id);
+				if (active && windowId != null) {
+					windowsManager?.focus(windowId);
 				} else {
-					newPins.push(app.id);
+					windowsManager?.open(app.id);
 				}
-
-				const settings = settingsManager.get(SettingsManager.VIRTUAL_PATHS.taskbar);
-				void settings.set("pins", newPins.join(","));
 			}}/>
-			{active && <ClickAction label="Close window" icon={faTimes} onTrigger={() => {
-				windowsManager.close(windowsManager.getAppWindowId(app.id));
-			}}/>} */}
+			<ClickAction label="Unpin from taskbar" icon={faThumbTack} disabled={!app.isPinned} onTrigger={() => {
+				void unpinAppFromTaskbar(settingsManager, app.id);
+			}}/>
+			{active && <ClickAction label="Close window" icon={faXmark} onTrigger={() => {
+				const windowId = windowsManager?.getAppWindowId(app.id);
+				if (windowId != null)
+					windowsManager?.close(windowId);
+			}}/>}
 		</Actions>,
 	});
 

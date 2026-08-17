@@ -6,7 +6,7 @@ import { createSlots } from "../_utils";
  */
 export interface TaskbarContext {
 	/** The current active menu in the taskbar. */
-	activeMenu: "home" | "search" | "indicator" | null;
+	activeMenu: "assistant" | "home" | "search" | "indicator" | null;
 	/** Sets the current active menu in the taskbar. */
 	setActiveMenu: (menu: TaskbarContext["activeMenu"]) => void;
 	/** Toggles the active state of a menu in the taskbar.  */

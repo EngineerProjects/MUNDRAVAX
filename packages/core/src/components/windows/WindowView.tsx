@@ -3,7 +3,7 @@ import styles from "./WindowView.module.css";
 import { faCircleRight, faExpand, faMinus, faWindowMaximize as fasWindowMaximize, faTimes, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { useWindowsManager } from "../../hooks/windows/windowsManagerContext";
 import Draggable from "react-draggable";
-import { FC, memo, MouseEventHandler, useCallback, useEffect, useRef, useState } from "react";
+import { FC, memo, MouseEventHandler, ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { faWindowMaximize } from "@fortawesome/free-regular-svg-icons";
 import utilStyles from "../../styles/utils.module.css";
 import { useContextMenu } from "../../hooks/modals/contextMenu";
@@ -33,6 +33,8 @@ export interface WindowProps extends WindowOptions {
 	fullscreen?: boolean;
 	/** Function that sets the title of the window. */
 	setTitle?: React.Dispatch<React.SetStateAction<string>>;
+	/** Function that sets custom content next to the window icon in the title bar. */
+	setTitleBarContent?: React.Dispatch<React.SetStateAction<ReactNode>>;
 	/** Function that sets the icon URL of the window. */
 	setIconUrl?: React.Dispatch<React.SetStateAction<string>>;
 	/** Function that closes the window. */
@@ -64,6 +66,7 @@ export const WindowView: FC<WindowProps> = memo(({ id, app, size, position, opti
 	const [maximized, setMaximized] = useState(fullscreen ?? false);
 	const [screenWidth, screenHeight] = useScreenDimensions();
 	const [title, setTitle] = useState(app?.name ?? "");
+	const [titleBarContent, setTitleBarContent] = useState<ReactNode>(null);
 	const [iconUrl, setIconUrl] = useState<string>(app ? appsConfig.getAppById(app.id)?.iconUrl ?? "" : "");
 	const zIndex = useZIndex({ groupIndex: ZIndexManager.GROUPS.WINDOWS, index: index ?? 0 });
 
@@ -197,6 +200,11 @@ export const WindowView: FC<WindowProps> = memo(({ id, app, size, position, opti
 							className={useClassNames([styles["Window-icon"]], "WindowIcon")}
 							src={iconUrl}
 						/>
+						{titleBarContent != null &&
+							<div className={styles["Title-bar-content"]}>
+								{titleBarContent}
+							</div>
+						}
 						<p className={useClassNames([utilStyles.TextSemibold], "WindowTitle")}>{title}</p>
 						<button aria-label="Minimize" className={styles["Header-button"]} tabIndex={0} id="minimize-window"
 							onClick={(event) => { toggleMinimized?.(event as unknown as Event); }}
@@ -232,6 +240,7 @@ export const WindowView: FC<WindowProps> = memo(({ id, app, size, position, opti
 								{...options}
 								app={app}
 								setTitle={setTitle}
+								setTitleBarContent={setTitleBarContent}
 								setIconUrl={setIconUrl}
 								close={close}
 								focus={focus}

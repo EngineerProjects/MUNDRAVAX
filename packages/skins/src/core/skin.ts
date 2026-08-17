@@ -52,6 +52,9 @@ export interface SkinOptions {
 	 */
 	folderIcons: {
 		generic: string;
+		config?: string;
+		desktop?: string;
+		downloads?: string;
 		images?: string;
 		text?: string;
 		link?: string;
@@ -134,6 +137,9 @@ export class Skin {
 		},
 		folderIcons: {
 			generic: this.assetUrl("/assets/apps/file-explorer/icons/folder.svg"),
+			config: this.assetUrl("/assets/apps/file-explorer/icons/folder-config.svg"),
+			desktop: this.assetUrl("/assets/apps/file-explorer/icons/folder-desktop.svg"),
+			downloads: this.assetUrl("/assets/apps/file-explorer/icons/folder-downloads.svg"),
 			images: this.assetUrl("/assets/apps/file-explorer/icons/folder-images.svg"),
 			text: this.assetUrl("/assets/apps/file-explorer/icons/folder-text.svg"),
 			link: this.assetUrl("/assets/apps/file-explorer/icons/folder-link.svg"),

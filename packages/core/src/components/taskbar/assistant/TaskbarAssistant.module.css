@@ -1,0 +1,17 @@
+.AssistantContainer {
+	flex: 0 0 auto;
+	height: 100%;
+	padding: 0 !important;
+}
+
+.AssistantButton {
+	justify-content: center;
+	width: var(--taskbar-height);
+	aspect-ratio: 1;
+	color: var(--foreground-color-0);
+}
+
+.AssistantButton > svg {
+	height: 1.2rem;
+	filter: var(--svg-drop-shadow-0);
+}

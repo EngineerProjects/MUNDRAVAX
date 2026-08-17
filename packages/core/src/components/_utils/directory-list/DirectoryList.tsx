@@ -43,6 +43,8 @@ export interface DirectoryListProps {
 	allowMultiSelect?: boolean;
 	/** Function that handles selection changes. */
 	onSelectionChange?: (params: OnSelectionChangeParams) => void;
+	filter?: string;
+	viewMode?: "grid" | "list";
 	[key: string]: unknown;
 }
 
@@ -50,7 +52,7 @@ export interface DirectoryListProps {
  * Component that displays the contents of a directory.
  */
 export function DirectoryList({ directory, showHidden = false, folderClassName, fileClassName, className,
-	onContextMenuFile, onContextMenuFolder, onOpenFile, onOpenFolder, allowMultiSelect = true, onSelectionChange, ...props }: DirectoryListProps): ReactElement | null {
+	onContextMenuFile, onContextMenuFolder, onOpenFile, onOpenFolder, allowMultiSelect = true, onSelectionChange, filter = "", viewMode = "grid", ...props }: DirectoryListProps): ReactElement | null {
 	const [folders, setFolders] = useState<VirtualFolder[]>([]);
 	const [files, setFiles] = useState<VirtualFile[]>([]);
 	const [selectedFolders, setSelectedFolders] = useState<string[]>([]);
@@ -191,13 +193,34 @@ export function DirectoryList({ directory, showHidden = false, folderClassName, 
 
 	if (className)
 		classNames.push(className);
+	if (viewMode === "list")
+		classNames.push(styles.ListView);
 	if (folderClassName)
 		folderClassNames.push(folderClassName);
 	if (fileClassName)
 		fileClassNames.push(fileClassName);
 
+	const normalizedFilter = filter.trim().toLowerCase();
+	const visibleFolders = normalizedFilter
+		? folders.filter((folder) => folder.name.toLowerCase().includes(normalizedFilter))
+		: folders;
+	const visibleFiles = normalizedFilter
+		? files.filter((file) => file.id.toLowerCase().includes(normalizedFilter))
+		: files;
+
 	folderClassName = useClassNames(folderClassNames, "DirectoryList", "Folder");
 	fileClassName = useClassNames(fileClassNames, "DirectoryList", "File");
+
+	const formatFileSize = (file: VirtualFile): string => {
+		if (file.content == null)
+			return "";
+
+		const bytes = new Blob([file.content]).size;
+		if (bytes < 1000)
+			return `${bytes} B`;
+
+		return `${Math.round(bytes / 1000)} KB`;
+	};
 
 	return <div
 		ref={ref}
@@ -210,7 +233,15 @@ export function DirectoryList({ directory, showHidden = false, folderClassName, 
 			? <div className={styles.SelectionRect} style={getRectSelectStyle()}/>
 			: null
 		}
-		{folders.map((folder) => 
+		{viewMode === "list" &&
+			<div className={styles.ListHeader}>
+				<span>Name</span>
+				<span>Date modified</span>
+				<span>Type</span>
+				<span>Size</span>
+			</div>
+		}
+		{visibleFolders.map((folder) => 
 			<Interactable
 				key={folder.id}
 				tabIndex={0}
@@ -227,13 +258,20 @@ export function DirectoryList({ directory, showHidden = false, folderClassName, 
 					deselectFolder(folder);
 				}}
 			>
-				<div className={styles.FolderIcon}>
-					<ImagePreview source={folder.getIconUrl()} onError={() => { folder.setIconUrl(null); }}/>
+				<div className={styles.NameCell}>
+					<div className={styles.FolderIcon}>
+						<ImagePreview source={folder.getIconUrl()} onError={() => { folder.setIconUrl(null); }}/>
+					</div>
+					<p>{folder.name}</p>
 				</div>
-				<p>{folder.name}</p>
+				{viewMode === "list" && <>
+					<span className={styles.DetailCell}>-</span>
+					<span className={styles.DetailCell}>File folder</span>
+					<span className={styles.DetailCell}></span>
+				</>}
 			</Interactable>
 		)}
-		{files.map((file) => 
+		{visibleFiles.map((file) => 
 			<Interactable
 				key={file.id}
 				tabIndex={0}
@@ -250,10 +288,17 @@ export function DirectoryList({ directory, showHidden = false, folderClassName, 
 					deselectFile(file);
 				}}
 			>
-				<div className={styles.FileIcon}>
-					<ImagePreview source={file.getIconUrl()} onError={() => { file.setIconUrl(null); }}/>
+				<div className={styles.NameCell}>
+					<div className={styles.FileIcon}>
+						<ImagePreview source={file.getIconUrl()} onError={() => { file.setIconUrl(null); }}/>
+					</div>
+					<p>{file.id}</p>
 				</div>
-				<p>{file.id}</p>
+				{viewMode === "list" && <>
+					<span className={styles.DetailCell}>-</span>
+					<span className={styles.DetailCell}>{file.getType()}</span>
+					<span className={styles.DetailCell}>{formatFileSize(file)}</span>
+				</>}
 			</Interactable>
 		)}
 	</div>;

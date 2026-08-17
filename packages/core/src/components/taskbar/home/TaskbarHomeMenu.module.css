@@ -13,9 +13,12 @@
 .HomeMenu {
 	opacity: 1;
 	display: flex;
+	flex-direction: column;
+	gap: 1rem;
 	border-top-left-radius: var(--border-radius-1);
 	border-top-right-radius: var(--border-radius-1);
 	border-bottom-left-radius: var(--border-radius-1);
+	border-bottom-right-radius: var(--border-radius-1);
 	transform: none;
 	transition: opacity var(--transition-duration-1) var(--ease-in-out-default),
 		transform var(--transition-duration-1) var(--ease-in-out-default);
@@ -60,102 +63,16 @@
 }
 
 .HomeMenu {
-	--default-buttons-width: 3rem;
-	--buttons-count: 5;
-
-	min-width: 16rem;
-	max-width: 32rem;
-	min-height: calc(var(--default-buttons-width) * var(--buttons-count));
-	border-bottom-left-radius: 0;
-	border-bottom-right-radius: var(--border-radius-1);
-}
-
-.Buttons {
-	--buttons-width: var(--default-buttons-width);
-	--padding: 0.25rem;
-	--filter: blur(0px);
-
-	position: absolute;
-	display: flex;
-	flex-direction: column-reverse;
-	justify-content: flex-start;
-	align-items: center;
-	bottom: 0;
-	left: 0;
-	padding: var(--padding);
-	margin-top: auto;
-	width: var(--buttons-width);
-	height: 100%;
-	border-radius: var(--border-radius-1);
-	overflow: hidden;
-	transition: width var(--transition-duration-1) var(--ease-in-out-default) var(--transition-duration-1);
-	z-index: 1;
-}
-
-.Buttons::after {
-	content: "";
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	border-radius: inherit;
-	pointer-events: none;
-	backdrop-filter: var(--filter);
-	transition: backdrop-filter var(--transition-duration-1) var(--ease-in-out-default) var(--transition-duration-1);
-}
-
-.Buttons:hover,
-.Buttons:focus-visible {
-	--buttons-width: 10rem;
-	--filter: var(--taskbar-filter);
-}
-
-.Buttons > button {
-	--button-width: calc(var(--buttons-width) - var(--padding) * 2);
-	--button-height: calc(var(--default-buttons-width) - var(--padding) * 2);
-
-	position: relative;
-	display: flex;
-	justify-content: flex-start;
-	align-items: center;
-	padding: 0.5rem;
-	width: var(--button-width);
-	height: var(--button-height);
-	border-radius: var(--border-radius-1);
-	overflow: hidden;
-	transition: inherit;
-	z-index: 1;
-}
-
-.Buttons > button > svg {
-	height: 1.5rem;
-	width: 1.5rem;
-}
-
-.Buttons > button > p {
-	position: absolute;
-	left: calc(var(--default-buttons-width) - var(--padding) * 2);
-	margin: 0;
-	white-space: nowrap;
-}
-
-.Apps {
-	display: flex;
-	flex-direction: column;
-	width: 100% !important;
-	max-height: 20rem;
-	padding: 0.5rem;
-	padding-right: 0.25rem;
-	padding-bottom: 0;
-	margin-left: var(--default-buttons-width);
+	width: 28rem;
+	max-width: 90vw;
+	max-height: 34rem;
+	padding: 1.25rem;
 }
 
 .Logo {
 	display: flex;
 	gap: 0.5rem;
 	width: auto;
-	margin-bottom: 0.5rem;
 	justify-content: flex-start;
 	align-items: center;
 	user-select: none;
@@ -164,7 +81,7 @@
 .Logo div,
 .Logo svg {
 	width: auto;
-	height: 2.25rem;
+	height: 1.5rem;
 	color: inherit;
 	aspect-ratio: 1;
 }
@@ -182,7 +99,123 @@
 	width: 100%;
 	text-align: left;
 	margin: 0;
-	font-size: 1rem;
+	font-size: 0.875rem;
 	font-weight: 600;
 	letter-spacing: normal;
+}
+
+.SearchBar {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	width: 100%;
+	padding: 0.7rem 0.9rem;
+	background-color: var(--background-color-0);
+	border-radius: var(--border-radius-1);
+	text-align: left;
+	transition: background-color var(--transition-duration-0) var(--ease-in-out-default);
+	position: relative;
+	z-index: 1;
+}
+
+.SearchBar:hover,
+.SearchBar:focus-visible {
+	background-color: var(--background-color-1);
+}
+
+.SearchBar > svg {
+	height: 0.9rem;
+	opacity: 0.6;
+	filter: var(--svg-drop-shadow-0);
+}
+
+.SearchBar > span {
+	opacity: 0.6;
+}
+
+.Section {
+	display: flex;
+	flex-direction: column;
+	flex: 1 1 auto;
+	min-height: 0;
+	gap: 0.5rem;
+	overflow-y: auto;
+}
+
+.AppGrid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 0.5rem;
+}
+
+.AppTile {
+	--size: 2rem;
+
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.6rem;
+	padding: 0.9rem 0.5rem;
+	border-radius: var(--border-radius-1);
+	text-align: center;
+	overflow: hidden;
+	transition: background-color var(--transition-duration-0) var(--ease-in-out-default);
+	z-index: 1;
+}
+
+.AppTile:hover,
+.AppTile:focus-visible {
+	background-color: var(--background-color-1);
+}
+
+.AppTile > div,
+.AppTile > div > div,
+.AppTile > div > div > svg {
+	width: var(--size);
+	height: var(--size);
+}
+
+.AppTile svg {
+	filter: var(--svg-drop-shadow-0);
+}
+
+.AppTile > span {
+	width: 100%;
+	font-size: 0.75rem;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.Footer {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 0.25rem;
+	padding-top: 0.75rem;
+	border-top: 1px solid var(--background-color-1);
+}
+
+.Footer > button {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.5rem;
+	height: 2.5rem;
+	border-radius: var(--border-radius-1);
+	transition: background-color var(--transition-duration-0) var(--ease-in-out-default);
+	z-index: 1;
+}
+
+.Footer > button:hover,
+.Footer > button:focus-visible {
+	background-color: var(--background-color-1);
+}
+
+.Footer > button > svg {
+	height: 1.1rem;
+	filter: var(--svg-drop-shadow-0);
 }

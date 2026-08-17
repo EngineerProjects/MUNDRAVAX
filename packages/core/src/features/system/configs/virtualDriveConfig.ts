@@ -57,6 +57,12 @@ export interface VirtualDriveConfigOptions {
 		includeDocumentsFolder?: boolean;
 
 		/**
+		 * Include downloads folder in default data.
+		 * @default true
+		 */
+		includeDownloadsFolder?: boolean;
+
+		/**
 		 * Include desktop folder in default data.
 		 * @default true
 		 */
@@ -100,10 +106,11 @@ export class VirtualDriveConfig {
 		this.defaultData = {
 			includePicturesFolder: true,
 			includeDocumentsFolder: true,
+			includeDownloadsFolder: true,
 			includeDesktopFolder: true,
 			includeSourceTree: true,
-			includeAppsFolder: true,
-			includeScriptsFolder: true,
+			includeAppsFolder: false,
+			includeScriptsFolder: false,
 			includeAudioFolder: true,
 			includeVideoFolder: true,
 			...defaultData,

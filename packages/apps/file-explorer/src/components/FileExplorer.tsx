@@ -1,9 +1,8 @@
 import { ChangeEventHandler, FC, KeyboardEventHandler, useCallback, useEffect, useState } from "react";
 import styles from "./FileExplorer.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowUp, faCaretLeft, faCaretRight, faCircleInfo, faCog, faDesktop, faFileLines, faHouse, faImage, faPlus, faSearch, faTrash, faUpload } from "@fortawesome/free-solid-svg-icons";
+import { faArrowUp, faCaretLeft, faCaretRight, faCircleInfo, faDesktop, faDownload, faFileLines, faHouse, faImage, faList, faPlus, faSearch, faTableCellsLarge, faTrash, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { QuickAccessButton } from "./QuickAccessButton";
-import { ImportButton } from "./ImportButton";
 import { Actions, ClickAction, CODE_EXTENSIONS, DialogBox, DirectoryList, Divider, FileEventHandler, FolderEventHandler, ModalProps, ModalsConfig, OnSelectionChangeParams, useAlert, useContextMenu, useHistory, useSystemManager, useVirtualRoot, useWindowedModal, useWindowsManager, utilStyles, VirtualFile, VirtualFolder, VirtualFolderLink, VirtualRoot, WindowProps } from "@prozilla-os/core";
 import { SELECTOR_MODE } from "../constants/fileExplorer.const";
 import { FileProperties } from "./modals/file-properties/FileProperties";
@@ -27,7 +26,9 @@ export function FileExplorer({ app, path: startPath, selectorMode, Footer, onSel
 
 	const [currentDirectory, setCurrentDirectory] = useState<VirtualFolder | null>(virtualRoot ? virtualRoot.navigateToFolder(startPath ?? "~") : null);
 	const [path, setPath] = useState<string>(currentDirectory?.path ?? "");
-	const [showHidden] = useState(true);
+	const [searchQuery, setSearchQuery] = useState("");
+	const [showHidden, setShowHidden] = useState(false);
+	const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 	const { history, stateIndex, pushState, undo, redo, undoAvailable, redoAvailable } = useHistory<string>(currentDirectory?.path ?? "");
 	const { alert } = useAlert();
 
@@ -123,6 +124,22 @@ export function FileExplorer({ app, path: startPath, selectorMode, Footer, onSel
 
 		return () => {
 			virtualRoot?.off(VirtualRoot.ERROR_EVENT, onError);
+		};
+	}, []);
+
+	useEffect(() => {
+		const onToggleHidden = (event: KeyboardEvent) => {
+			if (!event.ctrlKey || event.key.toLowerCase() !== "h")
+				return;
+
+			event.preventDefault();
+			setShowHidden((value) => !value);
+		};
+
+		document.addEventListener("keydown", onToggleHidden);
+
+		return () => {
+			document.removeEventListener("keydown", onToggleHidden);
 		};
 	}, []);
 
@@ -226,18 +243,23 @@ export function FileExplorer({ app, path: startPath, selectorMode, Footer, onSel
 					onKeyDown={onKeyDown as unknown as KeyboardEventHandler}
 					placeholder="Enter a path..."
 				/>
-				<ImportButton directory={currentDirectory!}/>
-				<button title="Search" tabIndex={0} className={styles.IconButton}>
+				<label className={styles.SearchInput}>
 					<FontAwesomeIcon icon={faSearch}/>
-				</button>
-				<button title="Settings" tabIndex={0} className={styles.IconButton}>
-					<FontAwesomeIcon icon={faCog}/>
-				</button>
+					<input
+						value={searchQuery}
+						type="search"
+						aria-label="Search files"
+						tabIndex={0}
+						onChange={(event) => { setSearchQuery(event.target.value); }}
+						placeholder="Search"
+					/>
+				</label>
 			</div>
 			<div className={styles.Body}>
 				<div className={styles.Sidebar}>
 					<QuickAccessButton name={"Home"} onClick={() => { changeDirectory("~"); }} icon={faHouse}/>
 					<QuickAccessButton name={"Desktop"} onClick={() => { changeDirectory("~/Desktop"); }} icon={faDesktop}/>
+					<QuickAccessButton name={"Downloads"} onClick={() => { changeDirectory("~/Downloads"); }} icon={faDownload}/>
 					<QuickAccessButton name={"Images"} onClick={() => { changeDirectory("~/Pictures"); }} icon={faImage}/>
 					<QuickAccessButton name={"Documents"} onClick={() => { changeDirectory("~/Documents"); }} icon={faFileLines}/>
 				</div>
@@ -246,6 +268,8 @@ export function FileExplorer({ app, path: startPath, selectorMode, Footer, onSel
 					id="main"
 					className={styles.Main}
 					showHidden={showHidden}
+					filter={searchQuery}
+					viewMode={viewMode}
 					onOpenFile={(event, file) => {
 						event.preventDefault();
 						if (isSelector)
@@ -272,6 +296,24 @@ export function FileExplorer({ app, path: startPath, selectorMode, Footer, onSel
 							: itemCount + " items"
 						}
 					</p>
+					<div className={styles.ViewButtons}>
+						<button
+							title="List view"
+							tabIndex={0}
+							className={viewMode === "list" ? `${styles.ViewButton} ${styles.Active}` : styles.ViewButton}
+							onClick={() => { setViewMode("list"); }}
+						>
+							<FontAwesomeIcon icon={faList}/>
+						</button>
+						<button
+							title="Grid view"
+							tabIndex={0}
+							className={viewMode === "grid" ? `${styles.ViewButton} ${styles.Active}` : styles.ViewButton}
+							onClick={() => { setViewMode("grid"); }}
+						>
+							<FontAwesomeIcon icon={faTableCellsLarge}/>
+						</button>
+					</div>
 				</span>
 				: Footer && <div className={styles.Footer}>
 					<Footer/>

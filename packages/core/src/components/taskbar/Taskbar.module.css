@@ -41,7 +41,7 @@
 	border: none;
 	outline: none;
 	transition: background-color var(--transition-duration-0) var(--ease-in-out-default);
-	z-index: -1;
+	z-index: 0;
 }
 
 .Taskbar button:hover,
@@ -55,8 +55,13 @@
 	height: 100%;
 }
 
-.AgentSlot {
-	flex: 0 0 auto;
-	width: 44rem;
+.CenterItems {
+	position: absolute;
+	left: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	height: 100%;
+	max-width: calc(100% - 12rem);
+	transform: translateX(-50%);
 }

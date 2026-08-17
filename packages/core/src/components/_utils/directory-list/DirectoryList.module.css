@@ -37,6 +37,16 @@
 	background-color: color-mix(in srgb, var(--background-color-0) 20%, transparent);
 }
 
+.NameCell {
+	display: flex;
+	gap: var(--gap);
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	max-width: 100%;
+	min-width: 0;
+}
+
 .FileButton p, .FolderButton p {
 	max-width: 100%;
 	margin: 0;
@@ -59,6 +69,80 @@
 	width: 50%;
 	height: auto;
 	aspect-ratio: 1;
+}
+
+.ListView {
+	display: flex;
+	flex-direction: column;
+	align-content: stretch;
+	flex-wrap: nowrap;
+	gap: 0.15rem;
+}
+
+.ListView .FileButton,
+.ListView .FolderButton {
+	--gap: 0.6rem;
+
+	display: grid;
+	grid-template-columns: minmax(12rem, 1.8fr) minmax(10rem, 1fr) minmax(9rem, 0.9fr) minmax(5rem, 0.5fr);
+	align-items: center;
+	width: 100%;
+	height: 2.5rem;
+	padding: 0.35rem 0.65rem;
+	text-align: left;
+}
+
+.ListHeader {
+	position: sticky;
+	top: 0;
+	display: grid;
+	grid-template-columns: minmax(12rem, 1.8fr) minmax(10rem, 1fr) minmax(9rem, 0.9fr) minmax(5rem, 0.5fr);
+	align-items: center;
+	height: 2rem;
+	padding: 0 0.65rem;
+	background-color: var(--background-color-2);
+	border-bottom: 1px solid var(--background-color-0);
+	z-index: 1;
+}
+
+.ListHeader > span {
+	padding: 0 0.5rem;
+	border-right: 1px solid var(--background-color-0);
+	font-size: 0.85rem;
+}
+
+.ListView .NameCell {
+	flex-direction: row;
+	justify-content: flex-start;
+	overflow: hidden;
+}
+
+.ListView .FileIcon,
+.ListView .FolderIcon {
+	flex: 0 0 auto;
+	width: 1.75rem;
+	height: 1.75rem;
+	max-height: none;
+}
+
+.ListView .FileIcon svg,
+.ListView .FolderIcon svg {
+	width: 100%;
+}
+
+.ListView .FileButton p,
+.ListView .FolderButton p {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.DetailCell {
+	overflow: hidden;
+	padding: 0 0.5rem;
+	font-size: 0.85rem;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .SelectionRect {
