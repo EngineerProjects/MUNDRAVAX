@@ -72,6 +72,16 @@ You can find a list of all packages related to ProzillaOS in [packages/README.md
 
 <!-- #endregion packages -->
 
+## Repository Layout
+
+- [`packages/`](./packages/) - shared libraries and applications.
+- [`demo/`](./demo/) - the runnable Mundravax/ProzillaOS demo shell.
+- [`src-tauri/`](./src-tauri/) - the desktop wrapper and Rust/Tauri bridge.
+- [`docs/`](./docs/) - public documentation.
+- [`project/`](./project/) - Mundravax vision, roadmap, design notes, and product thinking.
+- [`examples/`](./examples/) - standalone examples.
+- [`scripts/`](./scripts/) - development, release, and automation scripts.
+
 ## Links
 
 - [Demo][demo]
