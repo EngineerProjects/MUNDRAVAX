@@ -1,5 +1,7 @@
-import { memo, ReactElement, ReactNode, useEffect } from "react";
+import { memo, ReactElement, ReactNode, useEffect, useState } from "react";
 import { VirtualRootProvider } from "../../hooks/virtual-drive/virtualRootProvider";
+import { isTauri } from "../../features/_utils";
+import { tauriStorage } from "../../features/storage/tauriStorage";
 import { ZIndexManagerProvider } from "../../hooks/z-index/zIndexManagerProvider";
 import { WindowsManagerProvider } from "../../hooks/windows/windowsManagerProvider";
 import { ModalsManagerProvider } from "../../hooks/modals/modalsManagerProvider";
@@ -47,6 +49,25 @@ export interface ProzillaOSProps {
 export const ProzillaOS = memo(function(props: ProzillaOSProps): ReactElement {
 	const { systemName, tagLine, skin, config, children } = props;
 
+	// Tauri's IPC is always async, but `VirtualRootProvider` constructs the
+	// virtual drive synchronously during render — so under Tauri, mounting it
+	// (and everything below it) must wait for the encrypted drive file to be
+	// preloaded once. Plain-web consumers (no Tauri) skip this entirely.
+	const [driveReady, setDriveReady] = useState(() => !isTauri());
+
+	useEffect(() => {
+		if (!isTauri())
+			return;
+
+		let cancelled = false;
+		void tauriStorage.preload().then(() => {
+			if (!cancelled)
+				setDriveReady(true);
+		});
+
+		return () => { cancelled = true; };
+	}, []);
+
 	const systemParams = {
 		systemName,
 		tagLine,
@@ -62,7 +83,7 @@ export const ProzillaOS = memo(function(props: ProzillaOSProps): ReactElement {
 	} as SystemManagerParams;
 
 	return <SystemManagerProvider {...systemParams}>
-		<VirtualRootProvider>
+		{driveReady && <VirtualRootProvider>
 			<ZIndexManagerProvider>
 				<TrackingManagerProvider>
 					<WindowsManagerProvider>
@@ -79,7 +100,7 @@ export const ProzillaOS = memo(function(props: ProzillaOSProps): ReactElement {
 					</WindowsManagerProvider>
 				</TrackingManagerProvider>
 			</ZIndexManagerProvider>
-		</VirtualRootProvider>
+		</VirtualRootProvider>}
 	</SystemManagerProvider>;
 });
 

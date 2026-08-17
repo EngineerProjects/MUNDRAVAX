@@ -105,9 +105,9 @@ export class Storage {
 	/**
 	 * Clears all items stored in this storage.
 	 */
-	clear(): this {
+	clear(): Promise<this> {
 		localStorage.clear();
-		return this;
+		return Promise.resolve(this);
 	}
 
 	/**

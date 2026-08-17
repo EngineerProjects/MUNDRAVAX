@@ -198,9 +198,9 @@ export class VirtualRoot extends VirtualFolder<VirtualRootEvents> {
 	/**
 	 * Tells the storage manager to clear all data and reloads the window.
 	 */
-	reset() {
+	async reset() {
 		if (window.confirm("Are you sure you want to reset all your data?")) {
-			this.systemManager.storage.clear();
+			await this.storage.clear();
 			window.location.reload();
 		}
 	}

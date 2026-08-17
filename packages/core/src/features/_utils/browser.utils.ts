@@ -104,6 +104,14 @@ export function copyToClipboard(string: string, onSuccess?: (value: void) => voi
 	void navigator.clipboard.writeText(string).then(onSuccess, onFail);
 }
 
+/**
+ * Whether the app is running inside the Mundravax Tauri desktop shell,
+ * as opposed to a plain browser (e.g., the demo site or a third-party embed).
+ */
+export function isTauri(): boolean {
+	return typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
+}
+
 export function downloadUrl(url: string, name: string) {
 	// Create invisible anchor element with download URL
 	const anchor = document.createElement("a");
