@@ -1,5 +1,6 @@
 mod commands;
 mod storage;
+mod volume;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -18,6 +19,8 @@ pub fn run() {
       commands::load_drive,
       commands::save_drive,
       commands::clear_drive,
+      commands::get_volume,
+      commands::set_volume,
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
