@@ -1127,6 +1127,9 @@ importers:
       '@prozilla-os/file-explorer':
         specifier: workspace:*
         version: link:../apps/file-explorer
+      '@prozilla-os/logic-sim':
+        specifier: workspace:*
+        version: link:../apps/logic-sim
       '@prozilla-os/mail':
         specifier: workspace:*
         version: link:../apps/mail

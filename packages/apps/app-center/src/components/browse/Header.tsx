@@ -19,7 +19,7 @@ export function Header({ searchQuery, setSearchQuery, entries, category: current
 				value={searchQuery}
 				onChange={(event) => setSearchQuery(event.target.value)}
 				type="text"
-				placeholder="Search apps..."
+				placeholder="Search the store..."
 			/>
 		</div>
 		<div className={styles.CategoryBar}>

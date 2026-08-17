@@ -32,13 +32,13 @@ export function AppCenter({ tab: initialTab = "browse" }: AppCenterProps) {
 				className={`${styles.Tab} ${tab === "browse" ? styles.Active : ""}`}
 				onClick={() => setTab("browse")}
 			>
-				Browse
+				Store
 			</button>
 			<button
 				className={`${styles.Tab} ${tab === "install" ? styles.Active : ""}`}
 				onClick={() => setTab("install")}
 			>
-				Install
+				Install from source
 			</button>
 		</div>
 		{tab === "browse"

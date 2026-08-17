@@ -12,6 +12,7 @@ demo/public/config/tree.json
 vite.config.ts.timestamp-*.mjs
 .temp
 .turbo
+/.pnpm-store/
 
 # Reference clones (daedalOS, ProzillaOS, Win11React) — not part of Mundravax itself
 /helps/

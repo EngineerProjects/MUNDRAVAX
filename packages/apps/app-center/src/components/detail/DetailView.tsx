@@ -16,7 +16,7 @@ export function DetailView({ entry, onBack, onInstall, onUninstall }: DetailView
 
 	return <div className={styles.DetailView}>
 		<button className={styles.BackButton} onClick={onBack}>
-			<span>&larr;</span> Back to browse
+			<span>&larr;</span> Back to Store
 		</button>
 
 		<div className={styles.HeroSection}>

@@ -1,9 +1,8 @@
-import { AppsConfig, browser, calculator, fileExplorer, mail, mediaViewer, settings, terminal, textEditor, codeEditor } from "prozilla-os";
+import { AppsConfig, appCenter, browser, calculator, codeEditor, fileExplorer, logicSim, mail, mediaViewer, settings, terminal, textEditor } from "prozilla-os";
 import { NAME } from "./branding.config";
 
-// Note: appCenter and logicSim packages are intentionally kept installed (see packages/apps/)
-// but not registered here, so they stay out of the UI without deleting any files.
-// Re-register them (or games/skin overrides from the ProzillaOS history) when needed.
+// Logic Sim is registered but not installed by default. It stays available through Store
+// without showing in Home or the taskbar until the user installs it.
 
 export const appsConfig = new AppsConfig({
 	apps: [
@@ -24,6 +23,10 @@ export const appsConfig = new AppsConfig({
 		settings.setName("Settings")
 			.setDescription(`Configure ${NAME}'s settings and customize your experience.`)
 			.setIconUrl("/assets/apps/icons/settings.svg"),
+		appCenter.setName("Store")
+			.setDescription("Discover and install apps for Mundravax.")
+			.setIconUrl("/assets/apps/icons/app-center.svg")
+			.setPinnedByDefault(false),
 		mediaViewer.setName("Photos")
 			.setIconUrl("/assets/apps/icons/media-viewer.svg")
 			.setPinnedByDefault(false),
@@ -40,5 +43,10 @@ export const appsConfig = new AppsConfig({
 			.setDescription("Simple calculator app.")
 			.setIconUrl("/assets/apps/icons/calculator.svg")
 			.setPinnedByDefault(false),
+		logicSim.setName("Logic Sim")
+			.setDescription("Build and test digital logic circuits.")
+			.setIconUrl("/assets/apps/icons/logic-sim.svg")
+			.setPinnedByDefault(false)
+			.setInstalled(false),
 	],
 });
